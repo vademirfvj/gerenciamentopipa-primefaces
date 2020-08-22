@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14359764805080" configfile="/OperacaoPipa/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="2290" id="pf14443604277874" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf14443606882399 pf14448659464700 pf14448659464701 pf14448659464702 pf14448659464703 pf14448659464704 pf14448659464705 pf14448659464706 pf14526218025440 pf14526218025441 pf14526218025442 pf14526218025443 pf14526218025444 pf14590462700411 pf14590462700412" path="/*"/>
+  <nodes xsi:type="pageflow:PFPage" name="telaDistribuicaoPipeiro.xhtml" x="122" y="3121" id="pf14443604277877" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" path="/telaDistribuicaoPipeiro.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="home.xhtml" x="338" y="178" id="pf144436068823910" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf14443606882399" path="/home.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroPipeiro.xhtml" x="338" y="562" id="pf14448659464708" referenceLink="//@navigationRule.0/@navigationCase.6/@toViewId|" inlinks="pf14448659464700" path="/menu/cadastro/telaCadastroPipeiro.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroCidade.xhtml" x="338" y="946" id="pf14448659464709" referenceLink="//@navigationRule.0/@navigationCase.7/@toViewId|" inlinks="pf14448659464701" path="/menu/cadastro/telaCadastroCidade.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroMilitar.xhtml" x="338" y="1330" id="pf144486594647010" referenceLink="//@navigationRule.0/@navigationCase.8/@toViewId|" inlinks="pf14448659464702" path="/menu/cadastro/telaCadastroMilitar.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroPc.xhtml" x="338" y="1714" id="pf144486594647011" referenceLink="//@navigationRule.0/@navigationCase.9/@toViewId|" inlinks="pf14448659464703" path="/menu/cadastro/telaCadastroPc.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroPa.xhtml" x="338" y="2098" id="pf144486594647012" referenceLink="//@navigationRule.0/@navigationCase.10/@toViewId|" inlinks="pf14448659464704" path="/menu/cadastro/telaCadastroPa.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroUsuario.xhtml" x="338" y="2482" id="pf144486594647013" referenceLink="//@navigationRule.0/@navigationCase.11/@toViewId|" inlinks="pf14448659464705" path="/menu/cadastro/telaCadastroUsuario.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/cadastro/telaCadastroVeiculo.xhtml" x="338" y="2866" id="pf144486594647014" referenceLink="//@navigationRule.0/@navigationCase.12/@toViewId|" inlinks="pf14448659464706" path="/menu/cadastro/telaCadastroVeiculo.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaDistribuicaoPipeiro2.xhtml" x="122" y="3953" id="pf144490838881019" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" path="/menu/funcionalidade/telaDistribuicaoPipeiro2.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaDistribuicaoPipeiro.xhtml" x="338" y="3250" id="pf14526218025445" referenceLink="//@navigationRule.0/@navigationCase.2/@toViewId|" inlinks="pf14526218025440" path="/menu/funcionalidade/telaDistribuicaoPipeiro.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaRecurso.xhtml" x="338" y="3634" id="pf14526218025446" referenceLink="//@navigationRule.0/@navigationCase.3/@toViewId|" inlinks="pf14526218025441" path="/menu/funcionalidade/telaRecurso.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaEmpenho.xhtml" x="338" y="4018" id="pf14526218025447" referenceLink="//@navigationRule.0/@navigationCase.4/@toViewId|" inlinks="pf14526218025442" path="/menu/funcionalidade/telaEmpenho.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaPagamento.xhtml" x="338" y="4402" id="pf14526218025448" referenceLink="//@navigationRule.0/@navigationCase.14/@toViewId|" inlinks="pf14526218025443" path="/menu/funcionalidade/telaPagamento.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" id="pf14526218025449" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf14526218025444" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/relatorio/telaRelatorio.xhtml" id="pf14590462700413" referenceLink="//@navigationRule.0/@navigationCase.13/@toViewId|" inlinks="pf14590462700411" path="/menu/relatorio/telaRelatorio.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="menu/funcionalidade/telaTeste.xhtml" id="pf14590462700414" referenceLink="//@navigationRule.0/@navigationCase.14/@toViewId|" inlinks="pf14590462700412" path="/menu/funcionalidade/telaTeste.xhtml"/>
+  <links id="pf14443606882399" target="pf144436068823910" source="pf14443604277874" outcome="HOME" redirect="true"/>
+  <links id="pf14448659464700" target="pf14448659464708" source="pf14443604277874" outcome="TELA_PIPEIRO" redirect="true"/>
+  <links id="pf14448659464701" target="pf14448659464709" source="pf14443604277874" outcome="TELA_CIDADE" redirect="true"/>
+  <links id="pf14448659464702" target="pf144486594647010" source="pf14443604277874" outcome="TELA_MILITAR" redirect="true"/>
+  <links id="pf14448659464703" target="pf144486594647011" source="pf14443604277874" outcome="TELA_PC" redirect="true"/>
+  <links id="pf14448659464704" target="pf144486594647012" source="pf14443604277874" outcome="TELA_PA" redirect="true"/>
+  <links id="pf14448659464705" target="pf144486594647013" source="pf14443604277874" outcome="TELA_USUARIO" redirect="true"/>
+  <links id="pf14448659464706" target="pf144486594647014" source="pf14443604277874" outcome="TELA_VEICULO" redirect="true"/>
+  <links id="pf14526218025440" target="pf14526218025445" source="pf14443604277874" outcome="TELA_DISTRIBUICAO" redirect="true"/>
+  <links id="pf14526218025441" target="pf14526218025446" source="pf14443604277874" outcome="TELA_RECURSO" redirect="true"/>
+  <links id="pf14526218025442" target="pf14526218025447" source="pf14443604277874" outcome="TELA_EMPENHO" redirect="true"/>
+  <links id="pf14526218025443" target="pf14526218025448" source="pf14443604277874" outcome="TELA_PAGAMENTO" redirect="true"/>
+  <links id="pf14526218025444" target="pf14526218025449" source="pf14443604277874" outcome="LOGOUT" redirect="true"/>
+  <links id="pf14590462700411" target="pf14590462700413" source="pf14443604277874" outcome="TELA_RELATORIOS" redirect="true"/>
+  <links id="pf14590462700412" target="pf14590462700414" source="pf14443604277874" outcome="TELA_TESTE" redirect="true"/>
+</pageflow:Pageflow>

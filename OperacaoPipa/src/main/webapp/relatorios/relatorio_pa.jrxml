@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="Cp1252"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-11-23T15:23:47 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_pa" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e7324c7b-8762-480b-b3e5-e1c9bba2bcf4">
+	<property name="ireport.zoom" value="1.1000000000000005"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="comunidade" class="java.lang.String"/>
+	<field name="populacao" class="java.lang.Number"/>
+	<field name="distancia" class="java.lang.Number"/>
+	<field name="momento" class="java.lang.Number"/>
+	<field name="codcidade" class="java.lang.Number"/>
+	<field name="georeferenciamento" class="java.lang.String"/>
+	<field name="volume" class="java.lang.Number"/>
+	<field name="asfalto" class="java.lang.Number"/>
+	<field name="terra" class="java.lang.Number"/>
+	<field name="indice" class="java.lang.Number"/>
+	<field name="apontador" class="java.lang.String"/>
+	<field name="substituto" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image>
+				<reportElement x="468" y="11" width="41" height="25" uuid="3c915c4e-b41e-440d-bab8-6970160eb5d3"/>
+				<imageExpression><![CDATA["C:\\Users\\luiz\\Documents\\NewWorks\\repositoriooppipa\\OperacaoPipa\\src\\main\\webapp\\images\\brasao.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="300" y="11" width="186" height="68" uuid="f54f193b-b413-43e4-a4ed-b68e7a02003e"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[MINISTERIO DA DEFESA
+EXERCITO BRASILEIRO
+CMNE - 7ª RM/7ª DE - 7ª BDA INF MTZ
+ 31º BATALHAO DE INFANTARIA MOTORIZADO
+(R I de Linha do MA e SC/1772)
+BATALHAO PERIBEBUI]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="21" width="20" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="c0921b5d-5bff-4b1d-a0ec-4cf5c4fe59ca"/>
+				<box>
+					<pen lineStyle="Double"/>
+					<topPen lineStyle="Double"/>
+					<leftPen lineStyle="Double"/>
+					<bottomPen lineStyle="Double"/>
+					<rightPen lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="20" y="21" width="96" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="f62dfb99-39ad-43c0-a6df-75e1fad4dda8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Comunidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="116" y="21" width="54" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="deeffdcc-6cb3-4128-bb79-5444f08e55b7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[População]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="170" y="21" width="50" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="ddfabc13-946f-4837-addc-bbc74353ca9e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Distâcia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="220" y="21" width="50" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="f85fde2c-d845-40ab-bf8a-43ba226f0629"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Momento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="650" y="21" width="50" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cód. Cidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="570" y="21" width="80" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Georef.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="530" y="21" width="40" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Volume]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="486" y="21" width="44" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Asfalto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="450" y="21" width="36" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Terra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="410" y="21" width="40" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Índice]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="350" y="21" width="60" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Apontador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="270" y="21" width="80" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Substituto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="700" y="21" width="80" height="30" forecolor="#006699" backcolor="#E6E6E6" uuid="3b440a81-90cd-45ea-b153-9a7fb883f94d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="20" height="20" uuid="3c07971e-69e8-453f-a1eb-c9e624180244"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="0" width="96" height="20" uuid="ec8563df-e2e2-4269-b6ef-051c5137b956"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comunidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="116" y="0" width="54" height="20" uuid="e28f40c4-0589-4c10-ab8e-a2ac5c4f41e8"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{populacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="0" width="50" height="20" uuid="ccc2534d-c6a3-4103-9d8e-c4b245601be7"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{distancia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="50" height="20" uuid="e50bb336-b70c-4851-9509-1ffb39a204c5"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{momento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="650" y="0" width="50" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{codcidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="0" width="80" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{georeferenciamento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="0" width="40" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{volume}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="486" y="0" width="44" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{asfalto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="36" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{terra}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="0" width="40" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{indice}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="60" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{apontador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="80" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{substituto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="700" y="0" width="80" height="20" uuid="cdc1e54e-0bcd-4f4d-a58b-253856e37e2b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

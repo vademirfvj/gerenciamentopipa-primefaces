@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+	version="2.0">
+
+	<navigation-rule>
+	<from-view-id>/*</from-view-id>
+		<navigation-case>
+		   <from-outcome>HOME</from-outcome>
+		   <to-view-id>/home.xhtml</to-view-id>
+		   <redirect/>
+		 </navigation-case>
+		 <navigation-case>
+		   <from-outcome>LOGOUT</from-outcome>
+		   <to-view-id>/login.xhtml</to-view-id>
+		   <redirect/>
+		 </navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_DISTRIBUICAO</from-outcome>
+			<to-view-id>/menu/funcionalidade/telaDistribuicaoPipeiro.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_RECURSO</from-outcome>
+			<to-view-id>/menu/funcionalidade/telaRecurso.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_EMPENHO</from-outcome>
+			<to-view-id>/menu/funcionalidade/telaEmpenho.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_PAGAMENTO</from-outcome>
+			<to-view-id>/menu/funcionalidade/telaPagamento.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_PIPEIRO</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroPipeiro.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_CIDADE</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroCidade.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_MILITAR</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroMilitar.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_PC</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroPc.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_PA</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroPa.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_USUARIO</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroUsuario.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_VEICULO</from-outcome>
+			<to-view-id>/menu/cadastro/telaCadastroVeiculo.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_RELATORIOS</from-outcome>
+			<to-view-id>/menu/relatorio/telaRelatorio.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TELA_TESTE</from-outcome>
+			<to-view-id>/menu/funcionalidade/telaTeste.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+<!-- 	<application>
+		<variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>
+
+		<locale-config>
+			<default-locale>en</default-locale>
+		</locale-config>
+
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>msg</var>
+		</resource-bundle>
+	</application> -->
+	<application>
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+    </application>
+
+
+</faces-config>

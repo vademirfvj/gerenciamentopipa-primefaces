@@ -1,0 +1,226 @@
+@CHARSET "ISO-8859-1";
+
+.corHeader .ui-layout-unit-content{
+/*    background: #228B22; */
+background-image: url('../images/corTopo.png') !important;
+width: 110%;
+}
+
+h1 {
+	font-size: 29px;
+	font-family: TradeGothic LT;
+	color: white;
+	font-weight: bold;
+}
+
+*{
+	font-family: TradeGothic LT;
+	font-size: 17px;
+/* 	vertical-align: middle !important; */
+}
+
+.corFooter .ui-layout-unit-content{
+/*    background: #228B22; */
+background-image: url('../images/corTopo.png') !important;
+/* width: 110%; */
+text-align: right;
+}
+
+.corFundoMenu .ui-layout-unit-content{
+	background-image: url('../images/fundoTeste2.png') !important;
+}
+
+.corPanel .ui-layout-unit-content{
+   background: #98FB98;
+}
+
+.divHeader{
+	width: 100%!important;
+	height:16%;	
+	margin: 0 auto -2px;
+	border-bottom: 3px solid #228B22;
+}
+
+.divMenu {
+	float: left;
+/*     margin: 2% 0 0 1%; */
+    padding-bottom: 20px;
+    padding-right: 1%;
+/*     width: 20%; */
+    border-right: 3px solid #C4D9E4;
+}
+
+.divContent {
+	width: 73%;
+	margin: 1% -10% 0 25%;   
+   	padding-bottom:40px;
+}
+
+.divBanner {
+	margin-top: -13px;
+	margin-bottom: -20px;
+}
+
+.divLogin{
+	background-image: url('../images/fundo.png') !important;
+}
+
+.divFooter {
+	width: 100%;
+	height: 50%;
+	bottom: -20px;
+	position: relative;
+	clear: both;
+	z-index:0!important;
+	background: #00CD00; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background:
+		url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwNDI3OSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwZjJkNGEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top, #00CD00 0%, #006400 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00CD00),
+		color-stop(100%, #006400)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #00CD00 0%, #006400 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #00CD00 0%, #006400 100%);
+	/* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #00CD00 0%, #006400 100%);
+	/* IE10+ */
+	background: linear-gradient(to bottom, #00CD00 0%, #006400 100%);
+	/* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00CD00',
+		endColorstr='#006400', GradientType=0); /* IE6-8 */
+	box-shadow: 0 1px 10px rgba(0, 0, 0, 1.5);
+}
+
+.menu_table {
+	font-family:TradeGothic LT; 
+	font-size: 15px; 
+	text-align: left;
+	width:330px;
+	margin-top: 10%;
+}
+.banner {
+	width: 100%;
+	height: 350px;
+/* 	background: url('../images/logo.png'); */
+
+	margin-top: 2%;
+}
+
+.banner-img {
+	height: 350px;
+	background: url('../images/fundoTeste.png') no-repeat;
+	margin-left: 40%;
+	margin-top: 5%;
+}
+
+html,body {
+	background-color: #F2F3F3;
+/* 	background: url('../images/logoEmpresaTopo.png') no-repeat; */
+	font-family: TeutonNormal;
+	color: white;
+}
+
+.header-top {
+	width: 100%;
+	height: 32px;
+	background-color: #228B22;
+/* 	padding-left: 15%; */
+}
+
+.titulo-logado {
+	font-family: TeutonNormal;
+	font-size: 16px;
+	color: #AFCDDB;
+	text-transform: uppercase;
+	position: relative;
+	padding-top: 9px;
+}
+
+.header-main {
+	width: 100%;
+	height: 86px;
+	border-top: 2px solid #00FF00;
+	background: #00CD00; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background:
+		url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAzNzNhYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMTQ5ODQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top, #00CD00 0%, #228B22 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #00CD00),
+		color-stop(100%, #228B22)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #00CD00 0%, #228B22 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #00CD00 0%, #228B22 100%);
+	/* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #00CD00 0%, #228B22 100%);
+	/* IE10+ */
+	background: linear-gradient(to bottom, #00CD00 0%, #228B22 100%);
+	/* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00CD00',
+		endColorstr='#228B22', GradientType=0); /* IE6-8 */
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+
+.titulo-portal {
+	font-family: TeutonNormal;
+	font-size: 27px;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	margin-top: -30px;
+	margin-left: 130px;
+	margin-top: -30px;
+}
+
+.titulo-info {
+	font-family: TeutonNormal;
+	font-size: 27px;
+	color: #AFCDDB;
+	text-transform: uppercase;
+	margin-top: -57px;
+	margin-right: 150px;
+	text-align: right;
+	position: relative;
+}
+
+.Sub_titulo {
+	color: black;
+	font-size: 20px;
+	font-family: TeutonNormal;
+	margin-top: 1%;
+}
+
+.titulo-rodape {
+	font-family: TeutonNormal;
+	font-size: 18px;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	padding-top: 40px;
+	text-align: center;
+}
+
+.titulo-rodape-portal {
+	color: #AFCDDB;
+}
+
+.table_consulta {
+	font-family:TradeGothic LT; 
+	font-size: 12px;
+	margin-top: 5%;
+	align: center;
+	width: 80%;
+}
+
+.tooltip {
+	font-family:TradeGothic LT; 
+	font-size: 15px
+}
+
+.ui-panelgrid td, .ui-panelgrid tr{
+    border-style: none !important
+}
+
+.topAligned td{
+    vertical-align: top;
+}

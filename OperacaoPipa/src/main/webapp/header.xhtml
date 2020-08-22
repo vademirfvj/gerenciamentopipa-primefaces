@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<h:form>
+		<div class="header-top">
+			<div id="box">
+			<p class="titulo-logado"> 
+				<h:commandLink action="#{mBBase.home()}"  styleClass="home" value="Home" />
+				
+				<p:spacer width="20" height="20" />
+				
+				<h:commandLink action="#{mBBase.logout()}"  styleClass="home" value="Logout" />
+				
+				<p:spacer width="20" height="20" />
+				
+				versão 1.0 - Licença expira em #{mBBase.diasExpirarLicenca} dia(s)
+				
+			</p>
+			</div>
+		</div>
+		
+		<div class="header-main">
+			<div id="box">
+					<h:commandLink action="#{mBBase.home()}">
+					<p:graphicImage value="/images/logoTopo.png"/>
+					</h:commandLink>
+				<p class="titulo-portal">Sistema de Gerenciamento da Operação Pipa</p>
+				
+			</div>
+		</div>
+				
+		<p class="titulo-info"> 
+				<h:outputText value="Bem-vindo #{mBBase.nomeUsuario}"/>
+		</p>
+					
+		
+	</h:form>
+</ui:composition>

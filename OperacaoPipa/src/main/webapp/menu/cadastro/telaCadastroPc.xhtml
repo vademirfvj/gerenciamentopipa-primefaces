@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html" template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+		<h:body>
+
+			<h1 style="color: black;">Cadastro de Ponto de Coleta de Água</h1>
+
+			<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:messages id="msgCadastrarPC" showDetail="false" autoUpdate="true"
+				closable="true" />
+
+			<p:tabView id="tabViewPC" style="display: inline-block !important;width:1000px">
+				<p:tab title="Cadastrar">
+					<h:form id="frmCadastrarPC">
+						<p:panelGrid columns="2">
+						
+							<h:outputLabel id="lblPCNome" value="Ponto de Coleta: * " style="font-weight:bold" />
+							<p:inputText id="inPCNome" value="#{cadastrarPCBean.pontoColeta}" />
+
+							<h:outputLabel id="lblPCGeoLocalizacao" value="Geo Localização:" style="font-weight:bold" />
+							<p:inputText id="inPCGeoLocalizacao" value="#{cadastrarPCBean.geoLocalizacao}" />
+						
+							<h:outputLabel id="lblPCcodGcda" value="Código GCDA:" style="font-weight:bold" />
+							<p:inputMask mask="9?999999999999999" id="inPCcodGcda" value="#{cadastrarPCBean.codGcda}" />
+						
+						</p:panelGrid>
+						<div style="float: bottom;">
+						
+							<p:commandButton id="btnCadastrarPC" value="Salvar"
+								actionListener="#{cadastrarPCBean.salvarPC}"
+								update="msgCadastrarPC frmCadastrarPC" >
+							<p:confirm header="Confirmação"/>
+							</p:commandButton>
+								
+							<p:commandButton id="btnCancelarPC" value="Cancelar"
+								actionListener="#{cadastrarPCBean.limpaForm}"
+								update="frmCadastrarPC" />
+						</div>
+					</h:form>
+				</p:tab>
+				<p:tab title="Buscar">
+					<h:form id="frmPesquisarPC">
+					<p:panelGrid columns="5">
+						<h:outputLabel id="lblPC" for="inPC" value="Ponto de Coleta:  "
+							style="font-weight:bold" />
+						<p:inputText id="inPC" value="#{cadastrarPCBean.pesquisaPC}" />
+						
+						<h:outputLabel value="Status:" style="font-weight:bold" />
+
+						<p:selectOneMenu value="#{cadastrarPCBean.pesquisaStatusPC}">
+						<f:selectItem itemLabel="TODOS" itemValue="TODOS" />
+				            <f:selectItems value="#{cadastrarPCBean.getStatusEnum()}"
+								var="status" itemLabel="#{status.getLabel()}"
+								itemValue="#{status.getLabel()}" />
+				        </p:selectOneMenu>
+						
+						<p:commandButton id="btnPesquisarPC" value="Pesquisar" style="margin-left:5px;"
+							actionListener="#{cadastrarPCBean.pesquisarPC}" update="tabViewPC:dtResultadoPesquisaPC frmPesquisarPC"/>
+					</p:panelGrid>	
+					</h:form>
+					<br/>
+					<p:dataTable id="dtResultadoPesquisaPC" emptyMessage="Nenhum registro foi encontrado."
+						value="#{cadastrarPCBean.listaPesquisa}" var="pc" style="width:100%">
+						<p:column headerText="Ponto de Coleta">
+							<h:outputText value="#{pc.pontoColeta}" />
+						</p:column>
+
+						<p:column headerText="Geo Localização">
+							<h:outputText value="#{pc.geoLocalizacao}" />
+						</p:column>
+
+						<p:column headerText="Status">
+							<h:outputText value="#{pc.status}" />
+						</p:column>
+						
+						<p:column style="width:30px">
+							
+							<f:facet name="header">
+							<p:commandLink action="#{cadastrarPCBean.imprimirRelatorio()}" icon="ui-icon-search">
+								<p:graphicImage id="imprimirVisualizacaoPC" value="/images/print.png" />
+								<p:tooltip id="imprimirVisualizaTitlePC" styleClass="tooltip" for="imprimirVisualizacaoPC"  >
+									<h:outputText value="Imprimir Relatório" escape="false"/>
+								</p:tooltip>
+				
+							</p:commandLink>
+							</f:facet>
+							
+				           <p:commandLink styleClass="ui-icon ui-icon-pencil" title="Editar" oncomplete="PF('dlgEditarPC').show();"
+				           actionListener="#{cadastrarPCBean.enviaPCEditavel(pc)}" update="dlgEditarPC frmEditarPC"/>
+				           
+				       </p:column>
+			
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+
+		</h:body>
+		
+		<p:dialog id="dlgEditarPC"
+			widgetVar="dlgEditarPC" modal="true" resizable="false" closable="false" styleClass="dialog-center-header">
+
+			<f:facet name="header">
+
+				<h:outputText value="Editar Informações" />
+
+			</f:facet>
+
+			<h:form id="frmEditarPC">
+				<p:panelGrid columns="2">
+						
+							<h:outputLabel value="Ponto de Coleta:" style="font-weight:bold" />
+							<h:outputLabel value="#{cadastrarPCBean.pcEditavel.pontoColeta}" />
+
+							<h:outputLabel id="lblPCGeoLocalizacao" for="inPCGeoLocalizacao"
+											value="Geo Localização:" style="font-weight:bold" />
+							<p:inputText id="inPCGeoLocalizacao" value="#{cadastrarPCBean.pcEditavel.geoLocalizacao}" />
+
+							<h:outputLabel value="Código GCDA:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPCBean.pcEditavel.codGcda}" />
+						
+							
+						</p:panelGrid>
+						<div style="float: bottom;">
+						
+							<p:commandButton id="btnEditarPC" value="Salvar"
+								actionListener="#{cadastrarPCBean.editarPC}" onstart="PF('statusDialog').show();"
+								update="tabViewPC:dtResultadoPesquisaPC" oncomplete="PF('dlgEditarPC').hide();PF('statusDialog').hide();">
+								<p:confirm header="Confirmação"/>
+							</p:commandButton>
+								
+							<p:commandButton id="btnCancelarEditarPC" value="Cancelar"
+								actionListener="#{cadastrarPCBean.limpaEditavel}"
+								oncomplete="PF('dlgEditarPC').hide();"/>
+						</div>
+			</h:form>
+		</p:dialog>
+		
+				<p:confirmDialog styleClass="noIcon" global="true" >
+			<f:facet name="message">
+				<h:outputText value="Deseja salvar o registro?" style="margin:10px;"/>
+				<br />
+			</f:facet>
+			<div style="text-align:center;vertical-align:bottom;">	
+				<p:commandButton id="btnConfirmYes" value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" update=":messages"/>
+				<p:commandButton id="btnConfirmNo" value="Não" type="button"
+					styleClass="ui-confirmdialog-no"/>
+			</div>	
+		</p:confirmDialog>
+		
+	</ui:define>
+</ui:composition>

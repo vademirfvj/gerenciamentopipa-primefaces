@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="refresh" content="1800;url=/index.xhtml" />
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4;chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" href="../../favicon.ico" />
+	</f:facet>
+	<title>Operação Pipa</title>
+		<script type="text/javascript">
+		function start() {
+			statusDialog.show();
+		}
+
+		function stop() {
+			statusDialog.hide();
+		}
+		
+	</script>
+
+	<!-- Project core CSS, JS -->
+ 	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/opp.css" />
+
+</h:head>
+<h:body>
+<p:ajaxStatus onstart="statusDialog.show();"
+		onsuccess="statusDialog.hide();" />
+		
+    <p:dialog modal="true" widgetVar="statusDialog" header="Carregando" draggable="false" closable="false" resizable="false">
+		<p:graphicImage value="/images/loadingbar.gif" />
+	</p:dialog>		
+
+	
+	<div id="body-content">
+
+		<div class="divHeader" id="header">
+			<ui:include src="/header.xhtml"/>
+		</div>
+
+		<div class="divMenu" id="menu">
+			<ui:include src="/menu.xhtml"/>
+		</div>
+
+		<div class="divBanner" id="banner">
+			<ui:insert name="banner" />
+		</div>
+		<div class="divFooter" id="footer">
+			<ui:include src="/footer.xhtml" />
+		</div>
+
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<f:facet name="first">
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=8;FF=3;OtherUA=4;chrome=1" />
+	</f:facet>
+	<title>Operação Pipa</title>
+		
+
+	<!-- Project core CSS, JS -->
+ 	<link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/opp.css" />
+
+</h:head>
+<h:body>
+
+<h:form>
+	
+	<p:dialog header="Login" widgetVar="dlg" resizable="false" height="200px">
+        <p:outputPanel id="dlgOutputPanel">
+	        <h:panelGrid columns="2" cellpadding="5">
+	            <h:outputLabel for="username" value="Usuário:" />
+	            <p:inputText id="username" value="#{loginBean.usuario}" label="username" />
+	 
+	            <h:outputLabel for="password" value="Senha:" />
+	            <p:password id="password" value="#{loginBean.senha}" label="password" />
+	 
+	            <f:facet name="footer">
+	                <p:commandButton value="Login" update="messagesTipoDistribuicao" actionListener="#{loginBean.login}"/>
+	            </f:facet>  
+	        </h:panelGrid>
+		<p:messages id="messagesTipoDistribuicao" showDetail="true" autoUpdate="true" closable="true" />
+        </p:outputPanel>
+    </p:dialog>	
+</h:form> 
+</h:body>
+</html>

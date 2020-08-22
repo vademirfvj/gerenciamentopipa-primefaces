@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html" template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+		<h:body>
+			<h1 style="color: black;">Cadastro de Ponto de Abastecimento</h1>
+
+			<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:messages id="msgCadastrarPontoAbastecimento" showDetail="false"
+				autoUpdate="true" closable="true" />
+
+			<p:tabView id="tabViewPontoAbastecimento"
+				style="display: inline-block !important;width:1000px">
+				<p:tab title="Cadastrar">
+					<h:form id="frmCadastrarPontoAbastecimento">
+						<p:panelGrid columns="2">
+
+							<h:outputLabel value="Ponto de Abastecimento: * " style="font-weight:bold" />
+							<p:inputText
+								value="#{cadastrarPontoAbastecimentoBean.comunidade}">
+								<p:ajax event="change" update="@this" process="@this"/>
+							</p:inputText>
+
+							<h:outputLabel value="População:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.populacao}" readonly="true" disabled="true"/>
+
+							<h:outputLabel value="População para 5L: * " style="font-weight:bold" />
+							<p:outputPanel>
+							<p:inputMask mask="9?999999999999999" value="#{cadastrarPontoAbastecimentoBean.populacao5L}">
+							<p:ajax event="change" update="@this,frmCadastrarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.somaPopulacao}"/>
+							</p:inputMask>
+							
+							<p:graphicImage id="question" value="/images/question.png"/>
+					   			<p:tooltip styleClass="tooltip" for="question"  >
+			        				<h:outputText value="#{cadastrarPontoAbastecimentoBean.msg5l}" escape="false"/>
+			        		</p:tooltip>
+							</p:outputPanel>
+							
+							<h:outputLabel value="População para 20L: * " style="font-weight:bold" />
+							<p:outputPanel>
+							<p:inputMask mask="9?999999999999999" value="#{cadastrarPontoAbastecimentoBean.populacaoDefault}">
+							<p:ajax event="change" update="@this,frmCadastrarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.somaPopulacao}"/>
+							</p:inputMask>
+							
+							<p:graphicImage id="question2" value="/images/question.png"/>
+					   			<p:tooltip styleClass="tooltip" for="question2"  >
+			        				<h:outputText value="#{cadastrarPontoAbastecimentoBean.msg20l}" escape="false"/>
+			        		</p:tooltip>
+							</p:outputPanel>
+
+
+							<h:outputLabel id="lblCidadePontoColeta" value="Cidade: * "
+								style="font-weight:bold" />
+							<p:selectOneMenu id="oneCidadePontoColeta"
+								value="#{cadastrarPontoAbastecimentoBean.codcidade}">
+								<f:selectItems
+									value="#{cadastrarPontoAbastecimentoBean.listaCidade}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="Georreferenciamento:"
+								style="font-weight:bold" />
+							<p:inputText
+								value="#{cadastrarPontoAbastecimentoBean.georeferenciamento}">
+								<p:ajax event="change" update="@this" process="@this"/>
+							</p:inputText>
+
+							<h:outputLabel value="Volume:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.volume}" />
+
+							<h:outputLabel value="Distância" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.distancia}" readonly="true" disabled="true"/>
+
+							<h:outputLabel value="Asfalto: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.asfalto}">
+							<p:ajax event="change" update="@this,frmCadastrarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.calculaIndice}"/>
+							</p:inputText>
+
+							<h:outputLabel value="Terra: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.terra}">
+							<p:ajax event="change" update="@this,frmCadastrarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.calculaIndice}"/>
+							</p:inputText>
+
+							<h:outputLabel value="Índice especial: " style="font-weight:bold"/>
+						    <p:selectBooleanCheckbox value="#{cadastrarPontoAbastecimentoBean.indiceEspecial}">
+						       <p:ajax event="change" update="@this,frmCadastrarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.addIndiceEspecial}" />
+						    </p:selectBooleanCheckbox>
+							
+							<h:outputLabel value="Índice:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.indice}" readonly="true" disabled="true"/>
+
+							<h:outputLabel value="Momento Transporte:"
+								style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.momento}" readonly="true" disabled="true"/>
+
+							<h:outputLabel value="Apontador: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPontoAbastecimentoBean.apontador}" />
+
+							<h:outputLabel value="Substituto:" style="font-weight:bold" />
+							<p:inputText
+								value="#{cadastrarPontoAbastecimentoBean.substituto}" />
+
+							<h:outputLabel value="Código GCDA:"
+								style="font-weight:bold" />
+							<p:inputMask mask="9?999999999999999" value="#{cadastrarPontoAbastecimentoBean.codGcda}" />
+
+
+						</p:panelGrid>
+						<div style="float: bottom;">
+
+							<p:commandButton id="btnCadastrarPontoAbastecimento"
+								value="Salvar"
+								actionListener="#{cadastrarPontoAbastecimentoBean.salvar}"
+								update="msgCadastrarPontoAbastecimento frmCadastrarPontoAbastecimento">
+								<p:confirm header="Confirmação" />
+							</p:commandButton>
+
+							<p:commandButton id="btnCancelarPontoAbastecimento"
+								value="Cancelar"
+								actionListener="#{cadastrarPontoAbastecimentoBean.limpaForm}"
+								update="frmCadastrarPontoAbastecimento" />
+						</div>
+					</h:form>
+				</p:tab>
+				<p:tab title="Buscar">
+					<h:form id="frmPesquisarPontoAbastecimento">
+						<p:panelGrid columns="2">
+							<h:outputLabel id="lblPontoAbastecimento"
+								for="inPontoAbastecimento" value="Ponto de Abastecimento:  "
+								style="font-weight:bold" />
+							<p:inputText id="inPontoAbastecimento"
+								value="#{cadastrarPontoAbastecimentoBean.pesquisaPontoAbastecimento}" />
+
+							<h:outputLabel value="Status:" style="font-weight:bold" />
+
+							<p:selectOneMenu
+								value="#{cadastrarPontoAbastecimentoBean.pesquisaStatusPontoAbastecimento}">
+								<f:selectItem itemLabel="TODOS" itemValue="TODOS" />
+								<f:selectItems
+									value="#{cadastrarPontoAbastecimentoBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel id="lblCidadePontoColeta" value="Cidade: " style="font-weight:bold" />
+							
+							<p:selectOneMenu 
+								value="#{cadastrarPontoAbastecimentoBean.codcidadePesquisa}">
+								<f:selectItem itemLabel="Selecionar" itemValue="0" noSelectionOption="true" />
+								<f:selectItems
+									value="#{cadastrarPontoAbastecimentoBean.listaCidade}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+
+							<p:commandButton id="btnPesquisarPontoAbastecimento"
+								value="Pesquisar" style="margin-left:5px;"
+								actionListener="#{cadastrarPontoAbastecimentoBean.pesquisar}"
+								update="tabViewPontoAbastecimento:dtResultadoPesquisaPontoAbastecimento frmPesquisarPontoAbastecimento" />
+						</p:panelGrid>
+					</h:form>
+					<br />
+					<p:dataTable id="dtResultadoPesquisaPontoAbastecimento"
+						emptyMessage="Nenhum registro foi encontrado."
+						value="#{cadastrarPontoAbastecimentoBean.listaPesquisa}"
+						var="pontoAbastecimento" style="width:100%">
+						<p:column headerText="PontoAbastecimento">
+							<h:outputText value="#{pontoAbastecimento.comunidade}" />
+						</p:column>
+
+						<p:column headerText="Status">
+							<h:outputText value="#{pontoAbastecimento.status}" />
+						</p:column>
+						
+						<p:column headerText="Cidade">
+							<h:outputText value="#{pontoAbastecimento.nomeCidade}" />
+						</p:column>
+
+						<p:column style="width:30px">
+							
+							<f:facet name="header">
+							<p:commandLink action="#{cadastrarPontoAbastecimentoBean.imprimirRelatorio()}" icon="ui-icon-search">
+								<p:graphicImage id="imprimirVisualizacaoPA" value="/images/print.png" />
+								<p:tooltip id="imprimirVisualizaTitlePA" styleClass="tooltip" for="imprimirVisualizacaoPA"  >
+									<h:outputText value="Imprimir Relatório" escape="false"/>
+								</p:tooltip>
+				
+							</p:commandLink>
+							</f:facet>
+							
+							<p:commandLink styleClass="ui-icon ui-icon-pencil" title="Editar"
+								oncomplete="PF('dlgEditarPontoAbastecimento').show();"
+								actionListener="#{cadastrarPontoAbastecimentoBean.enviaEditavel(pontoAbastecimento)}"
+								update="dlgEditarPontoAbastecimento frmEditarPontoAbastecimento" />
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:tab>
+
+				<p:tab title="Indice">
+					<h:form id="frmIndicePontoAbastecimento">
+						<p:panel>
+				        	<p:fieldset legend="Definir Índices" style="margin-bottom:20px;width: 50%">
+				                	<p:dataTable id="indices" var="indices" value="#{cadastrarPontoAbastecimentoBean.listaIndice}" 
+				                	editable="true" style="margin-bottom:0;width: 100%">
+				
+								       <p:ajax event="rowEdit" listener="#{cadastrarPontoAbastecimentoBean.onRowEdit}" update=":tabViewPontoAbastecimento:frmIndicePontoAbastecimento:indices" />
+								 
+								       <p:column headerText="Descrição do índice">
+								               <h:outputText value="#{indices.dscIndice}" />
+								       </p:column>
+								 
+								       <p:column headerText="Índice">
+								           <p:cellEditor>
+								               <f:facet name="output"><h:outputText value="#{indices.indice}" /></f:facet>
+								               <f:facet name="input"><p:inputText value="#{indices.indice}" style="width:100%" label="Nome"/></f:facet>
+								           </p:cellEditor>
+								       </p:column>
+								       
+								       <p:column style="width:32px">
+								           <p:rowEditor />
+								       </p:column>
+								       
+								     </p:dataTable>
+				            </p:fieldset>
+		                </p:panel>
+					</h:form>
+				</p:tab>
+
+			</p:tabView>
+
+		</h:body>
+
+		<p:dialog id="dlgEditarPontoAbastecimento"
+			widgetVar="dlgEditarPontoAbastecimento" modal="true"
+			resizable="false" closable="false" styleClass="dialog-center-header">
+
+			<f:facet name="header">
+
+				<h:outputText value="Editar Informações" />
+
+			</f:facet>
+
+			<h:form id="frmEditarPontoAbastecimento">
+				<p:panelGrid columns="2">
+
+					<h:outputLabel value="Ponto de Abastecimento:" style="font-weight:bold" />
+					<h:outputLabel
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.comunidade}" />
+
+					<h:outputLabel value="População:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.populacao}" readonly="true" disabled="true"/>
+
+					<h:outputLabel value="População para 5L:" style="font-weight:bold" />
+					<p:inputText value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.populacao5L}" >
+							<p:ajax event="change" update="@this,frmEditarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.somaPopulacaoEditavel}"/>
+							</p:inputText>
+					
+					<h:outputLabel value="População para 20L:" style="font-weight:bold" />
+					<p:inputText value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.populacaoDefault}" >
+							<p:ajax event="change" update="@this,frmEditarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.somaPopulacaoEditavel}"/>
+							</p:inputText>
+
+					<h:outputLabel value="Distância" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.distancia}" readonly="true" disabled="true"/>
+					
+					<h:outputLabel id="lblCidadePontoColeta" value="Cidade:"
+						style="font-weight:bold" />
+					<p:selectOneMenu id="oneCidadePontoColeta"
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.codcidade}">
+						<f:selectItems
+							value="#{cadastrarPontoAbastecimentoBean.listaCidade}"
+							var="cidade" itemValue="#{cidade.id}"
+							itemLabel="#{cidade.cidade}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel value="Georreferenciamento:"
+						style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.georeferenciamento}" />
+
+					<h:outputLabel value="Volume:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.volume}" />
+
+					<h:outputLabel value="Asfalto:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.asfalto}" >
+							<p:ajax event="change" update="@this,frmEditarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.calculaIndiceEditavel}"/>
+							</p:inputText>
+
+					<h:outputLabel value="Terra:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.terra}">
+							<p:ajax event="change" update="@this,frmEditarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.calculaIndiceEditavel}"/>
+							</p:inputText>
+
+					<h:outputLabel value="Índice especial: " style="font-weight:bold"/>
+						    <p:selectBooleanCheckbox value="#{cadastrarPontoAbastecimentoBean.indiceEspecialEdit}">
+						       <p:ajax event="change" update="@this,frmEditarPontoAbastecimento" listener="#{cadastrarPontoAbastecimentoBean.addIndiceEspecialEditavel}" />
+						    </p:selectBooleanCheckbox>
+					<h:outputLabel value="Índice:" style="font-weight:bold" />
+					
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.indice}" readonly="true" disabled="true"/>
+
+					<h:outputLabel value="Momento Transporte:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.momento}" readonly="true" disabled="true"/>
+
+					<h:outputLabel value="Apontador:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.apontador}" />
+
+					<h:outputLabel value="Substituto:" style="font-weight:bold" />
+					<p:inputText
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.substituto}" />
+
+					<h:outputLabel id="lblPontoAbastecimentoStatus" value="Status:"
+						style="font-weight:bold" />
+					<p:selectOneMenu
+						value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.status}">
+						<f:selectItems
+							value="#{cadastrarPontoAbastecimentoBean.getStatusEnum()}"
+							var="status" itemLabel="#{status.getLabel()}"
+							itemValue="#{status.getLabel()}" />
+					</p:selectOneMenu>
+					
+					<h:outputLabel value="Código GCDA:" style="font-weight:bold" />
+					<p:inputText value="#{cadastrarPontoAbastecimentoBean.pontoAbastecimentoEditavel.codGcda}" />
+
+				</p:panelGrid>
+
+				<div style="float: bottom;">
+
+					<p:commandButton id="btnEditarPontoAbastecimento" value="Salvar"
+						actionListener="#{cadastrarPontoAbastecimentoBean.editar}"
+						onstart="PF('statusDialog').show();"
+						update="tabViewPontoAbastecimento:dtResultadoPesquisaPontoAbastecimento"
+						oncomplete="PF('dlgEditarPontoAbastecimento').hide();PF('statusDialog').hide();">
+						<p:confirm header="Confirmação" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarEditarPontoAbastecimento"
+						value="Cancelar"
+						actionListener="#{cadastrarPontoAbastecimentoBean.limpaEditavel}"
+						oncomplete="PF('dlgEditarPontoAbastecimento').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog styleClass="noIcon" global="true">
+			<f:facet name="message">
+				<h:outputText value="Deseja salvar o registro?" style="margin:10px;" />
+				<br />
+			</f:facet>
+			<div style="text-align: center; vertical-align: bottom;">
+				<p:commandButton id="btnConfirmYes" value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" update=":messages" />
+				<p:commandButton id="btnConfirmNo" value="Não" type="button"
+					styleClass="ui-confirmdialog-no" />
+			</div>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>

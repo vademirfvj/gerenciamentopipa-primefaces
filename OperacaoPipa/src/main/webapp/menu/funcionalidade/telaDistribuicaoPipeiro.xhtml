@@ -1,0 +1,1512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Distribuição Carradas</h1>
+	
+	<p:dialog modal="true" widgetVar="statusDialog" header="Carregando" draggable="false" closable="false" resizable="false">
+    	<p:graphicImage value="/images/loadingbar.gif" />
+	</p:dialog>	
+
+<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+	
+<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+</p:confirmDialog>
+
+	
+	<h:form id="form">
+<p:growl id="messages" showDetail="true"/>
+ 
+            <p:panel>
+                <p:fieldset legend="Definir Mês/Ano da Distribuição" style="margin-bottom:20px">
+	                <h:panelGrid columns="2" cellpadding="5">
+	                <p:outputLabel value="Mês:  " />
+	                <h:selectOneMenu id="mes" value="#{distribuicaoPipeiroBean.mesSelecionado}" label="Mês" required="true">
+	                <p:ajax event="change" update="@this,form:" listener="#{distribuicaoPipeiroBean.habilitarAno}"/>
+			                <f:selectItem itemLabel="Mês" itemValue="" noSelectionOption="true" />
+			                <f:selectItem itemLabel="Janeiro" itemValue="0" />
+			                <f:selectItem itemLabel="Fevereiro" itemValue="1" />
+			                <f:selectItem itemLabel="Março" itemValue="2" />
+			                <f:selectItem itemLabel="Abril" itemValue="3" />
+			                <f:selectItem itemLabel="Maio" itemValue="4" />
+			                <f:selectItem itemLabel="Junho" itemValue="5" />
+			                <f:selectItem itemLabel="Julho" itemValue="6" />
+			                <f:selectItem itemLabel="Agosto" itemValue="7" />
+			                <f:selectItem itemLabel="Setembro" itemValue="8" />
+			                <f:selectItem itemLabel="Outubro" itemValue="9" />
+			                <f:selectItem itemLabel="Novembro" itemValue="10" />
+			                <f:selectItem itemLabel="Dezembro" itemValue="11" />
+			                
+					</h:selectOneMenu>
+					
+					<p:outputLabel value="Ano:  " />
+					<h:selectOneMenu id="ano" value="#{distribuicaoPipeiroBean.anoSelecionado}" label="Ano" required="true" disabled="#{distribuicaoPipeiroBean.halibitarCampoAno}">
+		                <p:ajax update=":form" listener="#{distribuicaoPipeiroBean.recuperarCidadeTelaInicial}"/>
+		                <f:selectItem itemLabel="Ano" itemValue="" noSelectionOption="true" />
+		                <f:selectItem itemLabel="2015" itemValue="2015" />
+		                <f:selectItem itemLabel="2016" itemValue="2016" />
+		                <f:selectItem itemLabel="2017" itemValue="2017" />
+		                <f:selectItem itemLabel="2018" itemValue="2018" />
+		                <f:selectItem itemLabel="2019" itemValue="2019" />
+		                <f:selectItem itemLabel="2020" itemValue="2020" />
+		                <f:selectItem itemLabel="2021" itemValue="2021" />
+		                <f:selectItem itemLabel="2022" itemValue="2022" />
+		                <f:selectItem itemLabel="2023" itemValue="2023" />
+		                <f:selectItem itemLabel="2024" itemValue="2024" />
+		                <f:selectItem itemLabel="2025" itemValue="2025" />
+		                <f:selectItem itemLabel="2026" itemValue="2026" />
+                
+					</h:selectOneMenu>
+	                </h:panelGrid>
+                </p:fieldset>
+                
+                <p:fieldset legend="Definir Dias da Distribuição" style="margin-bottom:20px">
+                <h:panelGrid columns="2" columnClasses="label, value" rendered="#{distribuicaoPipeiroBean.flagExibirDefinirDias eq 1}">
+				
+				 <p:outputLabel for="inicio" value="Inicio: * " />
+        		 <p:calendar id="inicio" value="#{distribuicaoPipeiroBean.dateInicial}" locale="pt_BR" navigator="true" pattern="d/MM/yyyy">
+        		  <p:ajax event="dateSelect" update="fim"/>
+        		 </p:calendar>
+				
+				<p:outputLabel for="fim" value="Fim: * " />
+        		<p:calendar id="fim" value="#{distribuicaoPipeiroBean.dateFinal}" mindate="#{distribuicaoPipeiroBean.dateInicial}"
+        		locale="pt_BR" navigator="true" pattern="d/MM/yyyy">
+        		<p:ajax event="dateSelect" listener="#{distribuicaoPipeiroBean.onDateSelect}" update="grid,totalDias,question"/>
+        		</p:calendar>
+        		
+        		<h:outputLabel for="totalDias" value="Total dias:" style="font-weight:bold"/>
+  				<p:inputText  id="totalDias" value="#{distribuicaoPipeiroBean.totalDias}" readonly="true"/>
+
+                </h:panelGrid>
+                
+                <h:panelGrid columns="1" columnClasses="label, value" rendered="#{distribuicaoPipeiroBean.flagExibirDefinirDias > 1}">
+                	<h:outputText
+                    value="Os dias já foram definidos para o mês e ano selecionado. Total de dias: #{distribuicaoPipeiroBean.flagExibirDefinirDias}" />
+                    <h:outputText
+                    value="Para redefinir será necessário excluir todas as distribuições realizadas nesse período" />
+                </h:panelGrid>
+                
+                <p:graphicImage id="question" value="/images/question.png" rendered="#{distribuicaoPipeiroBean.flagExibirDefinirDias eq 1}"/>
+				<p:tooltip styleClass="tooltip" for="question"  >
+			     	<h:outputText value="#{distribuicaoPipeiroBean.msgDefDias}" escape="false"/>
+			     </p:tooltip>
+
+				<h:panelGrid columns="1" columnClasses="label, value" rendered="#{distribuicaoPipeiroBean.flagExibirDefinirDias eq 1}">
+        		<p:selectManyCheckbox id="grid" value="#{distribuicaoPipeiroBean.selectedDatas}" layout="grid" columns="7">
+        			<f:selectItems value="#{distribuicaoPipeiroBean.datas}" var="data" itemLabel="#{data.datasExtenso}" itemValue="#{data.data}" />
+        			<f:convertDateTime pattern="yyyyMMddHHmmssSSS" />
+    			</p:selectManyCheckbox>
+    			</h:panelGrid>
+             </p:fieldset>
+             
+            </p:panel>
+            
+            <p:panel id="panelCidadeInicial" header="Distribuir Pipeiro x Ponto de Abastecimento" style="display: inline-block !important">
+            
+            <p:dataTable id="cidadesInicial" var="cidadesInicial" value="#{distribuicaoPipeiroBean.cidades}"
+	    	style="margin-bottom:0;width: 80%" scrollable="true" scrollHeight="350" emptyMessage="" rendered="#{distribuicaoPipeiroBean.flagExibirTabelaCidadeInicial eq 1}">
+	    	
+	    	 <p:column headerText="Cidade" sortBy="#{cidadesInicial.cidade}">
+			        <h:outputText value="#{cidadesInicial.cidade}" />
+			    </p:column>
+			    
+			    <p:column headerText="Distribuição OK?">
+			        <p:graphicImage value="/images/distriNOK.png" rendered="#{cidadesInicial.flagDistribuicaoOk eq 0}"/>
+	           		
+	           		<p:graphicImage value="/images/distriOK.png" rendered="#{cidadesInicial.flagDistribuicaoOk eq 1}"/>
+			    </p:column>
+			    
+			    <p:column headerText="Distribuir Pontos de Abastecimento">
+				        <p:commandLink update=":form:wizardDetail" action="#{distribuicaoPipeiroBean.iniciarWizadDistribuicao()}" ajax="false" icon="ui-icon-search">
+				   			<p:graphicImage id="edit" value="/images/editarPontos.png" rendered="#{cidadesInicial.flagDistribuicaoOk eq 0}"/>
+					   			<p:tooltip id="editTitle" styleClass="tooltip" for="edit"  >
+			        				<h:outputText value="Distribuir Pontos" escape="false"/>
+			        			</p:tooltip>
+	                		<f:setPropertyActionListener value="#{cidadesInicial}" target="#{distribuicaoPipeiroBean.cidadeInicial}" />
+	           			</p:commandLink>
+	           			
+	           			<p:commandLink update=":form" action="#{distribuicaoPipeiroBean.visualizarCidadeDistribuicao()}" icon="ui-icon-search">
+	           			<p:graphicImage id="view" value="/images/view.png" rendered="#{cidadesInicial.flagDistribuicaoOk eq 1}"/>
+	           			<p:tooltip id="viewTitle" styleClass="tooltip" for="view"  >
+		        			<h:outputText value="Visualizar" escape="false"/>
+		        		</p:tooltip>
+		        		<f:setPropertyActionListener value="#{cidadesInicial}" target="#{distribuicaoPipeiroBean.cidadeInicial}" />
+		        		</p:commandLink>
+	           			
+	           			<p:spacer width="10" height="10" />
+		        		
+		        		<p:commandLink update=":form" action="#{distribuicaoPipeiroBean.editarDistribuicao()}" icon="ui-icon-search">
+	           			<p:graphicImage id="modify" value="/images/modify.gif" rendered="#{cidadesInicial.flagDistribuicaoOk eq 1}"/>
+	           			<p:tooltip id="modifyTitle" styleClass="tooltip" for="modify"  >
+		        			<h:outputText value="Editar" escape="false"/>
+		        		</p:tooltip>
+		        		<f:setPropertyActionListener value="#{cidadesInicial}" target="#{distribuicaoPipeiroBean.cidadeInicial}" />
+		        		</p:commandLink>
+		        		
+		        		
+	           			<p:spacer width="10" height="10" />
+	           			
+	           			<p:commandLink update=":form" action="#{distribuicaoPipeiroBean.excluirCidadeDistribuicao()}" icon="ui-icon-search">
+	           			<p:confirm header="Confirmação" message="Essa ação irá excluir a distribuição feita para essa cidade, no
+	           			mês e ano selecionado. Deseja prosseguir?" icon="ui-icon-alert" />
+	           			<p:graphicImage id="delete" value="/images/delete.png" rendered="#{cidadesInicial.flagDistribuicaoOk eq 1}"/>
+	           			<p:tooltip id="deleteTitle" styleClass="tooltip" for="delete"  >
+		        			<h:outputText value="Excluir" escape="false"/>
+		        		</p:tooltip>
+		        		<f:setPropertyActionListener value="#{cidadesInicial}" target="#{distribuicaoPipeiroBean.cidadeInicial}" />
+		        		</p:commandLink>
+			    </p:column>
+            </p:dataTable>
+            </p:panel>
+            
+            <p:dialog header="Distribuir Dias" widgetVar="wizardDialog" modal="true" showEffect="fade" hideEffect="fade" 
+            resizable="false" width="90%" height="90%" position="top">
+        		<p:ajax event="close" update=":form:cidadesInicial"/>
+        		<p:outputPanel id="wizardDetail" style="text-align:center;">
+        			<p:wizard flowListener="#{distribuicaoPipeiroBean.onFlowProcess}" widgetVar="wiz" backLabel="Anterior" nextLabel="Próximo">
+  
+ 
+        <p:tab id="tipoDistribuicao" title="Tipo Distribuição">
+            <p:panel header="Selecione tipo de distribuição">
+                <p:messages id="messagesTipoDistribuicao" showDetail="true" autoUpdate="true" closable="true" />
+                <h:panelGrid columns="2" columnClasses="label, value">
+
+                <p:selectOneRadio id="console" value="#{distribuicaoPipeiroBean.tipoDistribuicao}" layout="grid" columns="1">
+		            <f:selectItem itemLabel="Distribuição Manual" itemValue="manual" />
+		            <f:selectItem itemLabel="Distribuição Automática" itemValue="auto" />
+		        </p:selectOneRadio>
+
+				<p:selectBooleanCheckbox value="#{distribuicaoPipeiroBean.flagRecuperarUltimaDistribuicao}"/>
+		        
+                </h:panelGrid>
+            </p:panel>
+        </p:tab>
+ 
+        <p:tab id="confirm" title="Distribuição Ponto de Abastecimento">
+        <p:messages id="messagesConfirm" showDetail="true" autoUpdate="true" closable="true" />
+
+            <p:panel header="Definir Pontos de Abastecimento" >
+				<p:outputLabel value="Pipeiro: " rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}"/>
+					<p:selectOneMenu id="pipeiro" value="#{distribuicaoPipeiroBean.pipeiroSelecionado}" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}">
+	                  	<p:ajax event="change" update="@this" />
+	                <f:selectItem itemLabel="Não Informado" itemValue="Não Informado" noSelectionOption="true" />
+	                      <f:selectItems value="#{distribuicaoPipeiroBean.pipeirosClone}" var="pipeiro" itemLabel="#{pipeiro.nome}" itemValue="#{pipeiro.nome}" />
+	                </p:selectOneMenu>	
+	             <p:commandButton value="Confirmar" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form:wizardDetail" process="@this" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}"/>   				
+			<h:outputLabel for="viagensTotal" value="Total de Viagens:" style="font-weight:bold" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}"/>
+			<p:inputText  id="viagensTotal" value="#{distribuicaoPipeiroBean.totalViagensReal}" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}"/>
+			<p:inputText  id="valorTotal" value="#{distribuicaoPipeiroBean.totalValor}" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}">
+			        	<f:convertNumber type="currency" currencySymbol="R$" />
+			</p:inputText > 
+			<p:dataTable id="pipeiroPA" var="pipeiroPA" value="#{distribuicaoPipeiroBean.pontoAbastecimentosClone}" 
+			selection="#{distribuicaoPipeiroBean.pontoAbastecimentosManual}"
+			 rowKey="#{pipeiroPA.id}" style="margin-bottom:0;width: 60%" scrollable="true" scrollHeight="100"
+			 rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}" emptyMessage="">
+		        <f:facet name="header">
+		            Ponto de Abastecimento
+		        </f:facet>
+		        <p:ajax event="rowSelectCheckbox" update=":form:wizardDetail" listener="#{distribuicaoPipeiroBean.onSelectEdit}"/>
+		        <p:ajax event="rowUnselectCheckbox" update=":form:wizardDetail" listener="#{distribuicaoPipeiroBean.unSelectEdit}"/>
+		        <p:ajax event="toggleSelect" update=":form:wizardDetail" listener="#{distribuicaoPipeiroBean.selectEditAll}"  />
+		        
+		        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+		        <p:column headerText="Ponto de Abastecimento" sortBy="#{pipeiroPA.comunidade}">
+		            <h:outputText value="#{pipeiroPA.comunidade}" />
+		        </p:column>
+		        <p:column headerText="População" sortBy="#{pipeiroPA.populacao}">
+		            <h:outputText value="#{pipeiroPA.populacao}" />
+		        </p:column>
+	    	</p:dataTable>
+	    	
+	    	
+		<p:spacer height="10"/>
+			    	 
+		<p:panelGrid columns="2">
+		    		 
+		    <h:outputText style="font-weight: bold;" value="Valor Total:" />
+		    <h:outputText id="valorTotalRota" value="#{distribuicaoPipeiroBean.valorTotalRota}" >
+		    	<f:convertNumber type="currency" currencySymbol="R$" />
+		    </h:outputText>
+		 
+		    <h:outputText style="font-weight: bold;" value="Diferença:" />
+		    <h:outputText id="diferencaMaoirMenor" value="#{distribuicaoPipeiroBean.diferencaMaoirMenor}" >
+		    	<f:convertNumber type="currency" currencySymbol="R$" />
+		    </h:outputText>
+		 
+		</p:panelGrid>   	 
+		
+		<p:spacer height="20"/>
+			    	 
+	    	<p:dataTable id="rotaPagamento" var="rotaPagamento" value="#{distribuicaoPipeiroBean.rotaPagamentoPipeiroDTOList}"
+	    	style="margin-bottom:0;width: 90%" scrollable="true" scrollHeight="180" emptyMessage="">
+			    <p:column headerText="Pipeiro" sortBy="#{rotaPagamento.pipeiroDTO.nome}" style="text-align:center;font-size:13px !important">
+			        <h:outputText value="#{rotaPagamento.pipeiroDTO.nome}" />
+			    </p:column>
+			    
+			    <p:column headerText="Total de PA" sortBy="#{rotaPagamento.totalApontadores}">
+			        <h:outputText value="#{rotaPagamento.totalApontadores}" />
+			    </p:column>
+			    
+			    <p:column headerText="Valor Total" sortBy="#{rotaPagamento.valorTotalPA}">
+			        <h:outputText value="#{rotaPagamento.valorTotalPA}">
+			        	<f:convertNumber type="currency" currencySymbol="R$" />
+			        </h:outputText>
+			    </p:column>
+			    
+			    <p:column headerText="Exibir Rota" style="text-align:center;">
+				    <p:commandLink update=":form:rotaDetail" oncomplete="PF('rotaDialog').show()" icon="ui-icon-search">
+				    <p:graphicImage value="/images/editRota.png" />
+	                	<f:setPropertyActionListener value="#{rotaPagamento}" target="#{distribuicaoPipeiroBean.rotaSelecionada}" />
+	           		</p:commandLink>
+			    </p:column>
+			    
+			    <p:column headerText="Distribuir Dias" style="text-align:center;">
+			    	<p:commandLink update=":form:diasDetail" oncomplete="PF('diasDialog').show()" icon="ui-icon-search" title="View" >
+				        <p:graphicImage value="/images/editDias.png" />
+				        <f:setPropertyActionListener value="#{rotaPagamento}" target="#{distribuicaoPipeiroBean.rotaSelecionada}" />
+				    </p:commandLink>
+				    
+				    <p:spacer width="10" height="10" />
+				    
+				    <p:graphicImage value="/images/distriNOK.png" rendered="#{rotaPagamento.distribuicaoDiasOK eq 0}"/>
+	           		
+	           		<p:graphicImage value="/images/distriOK.png" rendered="#{rotaPagamento.distribuicaoDiasOK eq 1}"/>
+			    </p:column>
+			    
+			</p:dataTable>
+			
+			 <p:spacer height="40"/>
+			 
+		<p:commandButton value="Redistribuir" update=":form:wizardDetail" actionListener="#{distribuicaoPipeiroBean.redistribuir}" 
+			    icon="ui-icon-arrowrefresh-1-w" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 0}"/>
+			    
+		<p:commandButton value="Distribuir Restantes Aut." actionListener="#{distribuicaoPipeiroBean.distribuirPARestante()}" update=":form:wizardDetail" 
+		icon="ui-icon-arrowrefresh-1-w" process="@this" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 1}"/>
+		<p:commandButton value="Salvar" actionListener="#{distribuicaoPipeiroBean.save}"
+		icon="ui-icon-disk"/>	    	
+<!-- 		update="@form" onstart="pbAjax.start()" widgetVar="startButton1"/>	    	 -->
+        </p:panel>
+        
+        <p:panel id="pontosPendentes" header="Pontos de Abastecimento removidos" style="margin-top:20px" rendered="#{distribuicaoPipeiroBean.flagExibirTabela eq 0}">
+        	<p:panelGrid columns="2">
+            
+		<p:outputLabel value="Pipeiro: "/>
+				<p:selectOneMenu id="pipeiroPendente" value="#{distribuicaoPipeiroBean.pipeiroSelecionado}" >
+		            <p:ajax listener="#{distribuicaoPipeiroBean.valorPrevio}" update="viagensTotalPendente,valorTotalPendente" />
+		          	<f:selectItem itemLabel="Não Informado" itemValue="Nao Informado" noSelectionOption="true" />
+		          	<f:selectItems value="#{distribuicaoPipeiroBean.pipeirosClone}" var="pipeiro" itemLabel="#{pipeiro.nome}" itemValue="#{pipeiro.nome}" />
+	        	</p:selectOneMenu>
+	        
+	        <p:outputLabel value="Ponto de Abast. Pendente: "/>
+				<p:selectOneMenu id="paPendente" value="#{distribuicaoPipeiroBean.pontoAbastecimentoPendenteSelecionado}" requiredMessage="Não Informado">
+<!-- 		            <p:ajax event="change" update="@this" /> -->
+		            <p:ajax listener="#{distribuicaoPipeiroBean.valorPrevio}" update="viagensTotalPendente,valorTotalPendente" />
+		          	<f:selectItem itemLabel="Não Informado" itemValue="0"/>
+		          	<f:selectItems value="#{distribuicaoPipeiroBean.pontoAbastecimentoPendente}" var="pa" itemLabel="#{pa.comunidade}" itemValue="#{pa.id}" />
+	        </p:selectOneMenu>
+	        
+	    <p:outputPanel>
+	    
+	    		<h:outputLabel for="viagensTotalPendente" value="Total de Viagens:" style="font-weight:bold"/>
+				<p:inputText  id="viagensTotalPendente" value="#{distribuicaoPipeiroBean.totalViagensRealPendente}"/>
+				
+				<h:outputLabel for="valorTotalPendente" value="Total Valor:" style="font-weight:bold"/>
+				<p:inputText  id="valorTotalPendente" value="#{distribuicaoPipeiroBean.totalValorPendente}">
+			   	 <f:convertNumber type="currency" currencySymbol="R$" />
+			    </p:inputText >
+	    
+	    </p:outputPanel>    
+
+			<p:commandButton value="Realocar" update=":form:wizardDetail" actionListener="#{distribuicaoPipeiroBean.realocar}" 
+			    icon="ui-icon-arrowrefresh-1-w"/>
+			    
+        </p:panelGrid>
+    	</p:panel>
+    
+        </p:tab>
+    </p:wizard>
+        		</p:outputPanel>
+    		</p:dialog>
+    		
+    <p:dialog header="Informações da Rota" widgetVar="rotaDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true">
+   		 <p:ajax event="close" update=":form:wizardDetail"/>
+        
+        <p:outputPanel id="rotaDetail" style="text-align:center;">
+        <p:dataTable var="rota" value="#{distribuicaoPipeiroBean.rotaSelecionada}" emptyMessage="">
+            <p:column headerText="Municipio">
+                <h:outputText value="#{rota.cidadeDTO.cidade}" />
+            </p:column>
+ 
+            <p:column headerText="Pipeiro">
+                <h:outputText value="#{rota.pipeiroDTO.nome}" />
+            </p:column>
+ 
+            <p:column headerText="Qtd Dias">
+                <h:outputText value="#{rota.numDiasMes}" />
+            </p:column>
+ 
+            <p:column headerText="Litros/Pessoa">
+                <h:outputText value="#{rota.litrosPessoa}" />
+            </p:column>
+            
+            <p:column headerText="Placa">
+                <h:outputText value="#{rota.pipeiroDTO.veiculoDTO.placa}" />
+            </p:column>
+            
+            <p:column headerText="Mês">
+                <h:outputText value="#{rota.mesAno}" />
+            </p:column>
+        </p:dataTable>
+        
+        
+        <h:outputLabel for="pontoColeta" value="Ponto de Coleta: " style="font-weight:bold"/>
+  		<h:outputText  id="pontoColeta" value="#{distribuicaoPipeiroBean.rotaSelecionada.cidadeDTO.pontoColetaDTO.pontoColeta}"/>
+  
+        <p:dataTable var="pa" value="#{distribuicaoPipeiroBean.rotaSelecionada.pontoAbastecimentoDTOList}" 
+        selectionMode="single" selection="#{distribuicaoPipeiroBean.palist}" rowKey="#{pa.apontador}" emptyMessage="">
+            <p:column headerText="Comunidade Beneficiada" style="text-align:center;font-size:13px !important;width: 200px;">
+                <h:outputText value="#{pa.comunidade}" />
+            </p:column>
+ 
+            <p:column headerText="Apontadores" style="text-align:center;font-size:13px !important;width: 200px;">
+                <h:outputText value="#{pa.apontador}" />
+            </p:column>
+ 
+            <p:column headerText="Momento">
+                <h:outputText value="#{pa.momento}" />
+            </p:column>
+ 
+            <p:column headerText="Qtd Pessoas">
+                <h:outputText value="#{pa.populacao}" />
+            </p:column>
+            
+            <p:column headerText="Qtd Água (M3)">
+                <h:outputText value="#{pa.qtdAgua}" />
+            </p:column>
+            
+            <p:column headerText="Cap Pipa (M3)">
+                <h:outputText value="#{pa.capacidadePipa}" />
+            </p:column>
+            
+              <p:column headerText="Qtd de Viagens (Formula)">
+                <h:outputText value="#{pa.qtdViagensFormula}" />
+            </p:column>
+            
+             <p:column headerText="Qtd de Viagens (Real)">
+                <h:outputText value="#{pa.qtdViagensReal}" />
+            </p:column>
+            
+            <p:column headerText="Distância (PC-PA)">
+                <h:outputText value="#{pa.kmPercorridoPA}" />
+            </p:column>
+            
+            <p:column headerText="Valor Bruto">
+                <h:outputText value="#{pa.valorBruto}">
+                <f:convertNumber type="currency" currencySymbol="R$" />
+                </h:outputText>
+            </p:column>
+            
+            <p:column style="text-align:center;font-size:13px !important;width: 80px;">
+				<p:commandLink id="ajax" update=":form:rotaDetail,:form:pontosPendentes" action="#{distribuicaoPipeiroBean.excluirPontoAbastecimento}">
+				<p:confirm header="Confirmação" message="Essa ação irá excluir o ponto de abastecimento do Pipeiro. Deseja prosseguir?" icon="ui-icon-alert" />
+        			<h:outputText value="Excluir Ponto" />
+        			<f:setPropertyActionListener value="#{pa}" target="#{distribuicaoPipeiroBean.pontoAbastecimentoSelecionado}" />
+    			</p:commandLink>
+			</p:column>
+			
+			<p:column style="text-align:center;font-size:13px !important;width: 135px;">
+				<p:commandLink id="ajaxReducao" update=":form:reducaoDetail" oncomplete="PF('reducaoDialog').show()" action="#{distribuicaoPipeiroBean.atribuirReducaoViagens}">
+        			<h:outputText value="Reduzir Viagens" />
+        			<f:setPropertyActionListener value="#{pa}" target="#{distribuicaoPipeiroBean.pontoAbastecimentoSelecionado}" />
+    			</p:commandLink>
+			</p:column>
+			    
+        </p:dataTable>
+        
+        <p:spacer height="20"/>
+        
+        <p:dataTable var="rotaTotal" value="#{distribuicaoPipeiroBean.rotaSelecionada}" emptyMessage="">
+            <p:column headerText="Total Apontador">
+                <h:outputText value="#{rotaTotal.totalApontadores}" />
+            </p:column>
+ 
+            <p:column headerText="Total Pessoas">
+                <h:outputText value="#{rotaTotal.totalPessoas}" />
+            </p:column>
+ 
+            <p:column headerText="Total Qtd Água (M3)">
+                <h:outputText value="#{rotaTotal.totalQtdAgua}" />
+            </p:column>
+ 
+            <p:column headerText="Total Qtd de Viagens (Formula)">
+                <h:outputText value="#{rotaTotal.totalViagensFormula}" />
+            </p:column>
+            
+            <p:column headerText="Total Qtd de Viagens (Real)">
+                <h:outputText value="#{rotaTotal.totalViagensReal}" />
+            </p:column>
+            
+            <p:column headerText="Total Distância (PC-PA)">
+                <h:outputText value="#{rotaTotal.totalDistacia}" />
+            </p:column>
+            
+            <p:column headerText="Total Valor Bruto">
+                <h:outputText value="#{rotaTotal.valorTotalPA}">
+                <f:convertNumber type="currency" currencySymbol="R$" />
+                </h:outputText>
+            </p:column>
+        </p:dataTable>
+        
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog header="Distribuir Dias" widgetVar="diasDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true">
+        <p:ajax event="close" update=":form:rotaPagamento" listener="#{distribuicaoPipeiroBean.validaDistribuicaoDiasOK()}"/>
+        <p:outputPanel id="diasDetail" style="text-align:center;">
+        <p:dataTable var="rotaDias" value="#{distribuicaoPipeiroBean.rotaSelecionada}" emptyMessage="">
+            <p:column headerText="Municipio">
+                <h:outputText value="#{rotaDias.cidadeDTO.cidade}" />
+            </p:column>
+ 
+            <p:column headerText="Pipeiro">
+                <h:outputText value="#{rotaDias.pipeiroDTO.nome}" />
+            </p:column>
+ 
+            <p:column headerText="CPF">
+                <h:outputText value="#{rotaDias.pipeiroDTO.cpf}" />
+            </p:column>
+ 
+            <p:column headerText="Cubagem">
+                <h:outputText value="#{rotaDias.pipeiroDTO.veiculoDTO.capacidadePipa}" />
+            </p:column>
+            
+            <p:column headerText="Placa">
+                <h:outputText value="#{rotaDias.pipeiroDTO.veiculoDTO.placa}" />
+            </p:column>
+            
+            <p:column headerText="Mês">
+                <h:outputText value="#{rotaDias.mesAno}" />
+            </p:column>
+        </p:dataTable>
+        
+        
+        <h:outputLabel for="pontoColeta2" value="Ponto de Coleta: " style="font-weight:bold"/>
+  		<h:outputText  id="pontoColeta2" value="#{distribuicaoPipeiroBean.rotaSelecionada.cidadeDTO.pontoColetaDTO.pontoColeta}"/>
+  
+        <p:dataTable id="diasDistr" var="paDias" value="#{distribuicaoPipeiroBean.rotaSelecionada.pontoAbastecimentoDTOList}" editable="true" 
+        editMode="cell" emptyMessage="">
+        <f:facet name="header">
+            <p:commandButton   icon="ui-icon-star" value="Distribuição Automática" actionListener="#{distribuicaoPipeiroBean.distribuicaoAutoDias}" update=":form:diasDistr,:form:rotaTotais" process="@this"/>
+        </f:facet>
+        
+        <p:ajax event="cellEdit" listener="#{distribuicaoPipeiroBean.onCellEdit}" update=":form:rotaTotais"></p:ajax>
+            <p:column headerText="Comunidade Beneficiada" width="300" style="text-align:center;font-size:13px !important">
+                <h:outputText value="#{paDias.comunidade}" />
+            </p:column>
+ 
+<!--             <p:column headerText="Apontadores"> -->
+<!--                 <h:outputText value="#{paDias.apontador}" /> -->
+<!--             </p:column> -->
+ 
+<!--             <p:column headerText="Qtd Pessoas"> -->
+<!--                 <h:outputText value="#{paDias.populacao}" /> -->
+<!--             </p:column> -->
+
+             <p:column headerText="Qtd de Viagens" width="55">
+                <h:outputText value="#{paDias.qtdViagensReal}" />
+            </p:column>
+
+<!--             <p:column headerText="Distância (PC-PA)"> -->
+<!--                 <h:outputText value="#{paDias.kmPercorridoPA}" /> -->
+<!--             </p:column> -->
+            
+<!--             <p:columns value="#{paDias.diasCarrada}" var="data" columnIndexVar="colIndex" headerText="#{data.datasExtenso}"> -->
+<!-- 	           <p:cellEditor> -->
+<!-- 	           	<f:facet name="output"><h:outputText value="#{data.dias[colIndex]}" /></f:facet> -->
+<!--                 <f:facet name="input"><p:inputText value="#{data.dias[colIndex]}" /></f:facet> -->
+<!-- 	           </p:cellEditor> -->
+<!--         	</p:columns> -->
+            
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia1)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia1.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia1.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia2)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia2.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia2.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia3)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia3.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia3.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia4)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia4.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia4.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia5)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia5.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia5.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia6)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia6.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia6.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia7)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia7.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia7.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia8)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia8.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia8.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia9)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia9.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia9.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia10)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia10.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia10.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia11)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia11.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia11.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia12)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia12.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia12.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia13)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia13.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia13.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia14)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia14.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia14.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia15)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia15.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia15.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia16)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia16.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia16.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia17)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia17.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia17.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia18)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia18.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia18.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia19)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia19.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia19.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia20)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia20.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia20.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia21)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia21.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia21.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia22)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia22.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia22.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia23)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia23.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia23.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia24)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia24.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia24.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia25)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia25.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia25.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia26)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia26.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia26.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia27)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia27.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia27.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia28)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia28.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia28.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia29)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia29.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia29.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia30)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia30.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia30.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia31)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia31.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia31.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+        </p:dataTable>
+        
+        <p:dataTable var="rotaTotais" id="rotaTotais" value="#{distribuicaoPipeiroBean.rotaSelecionada}" emptyMessage="">
+        
+            <p:column headerText="-" width="300" style="text-align:center;font-size:13px !important">
+                <h:outputText value="-"  />
+            </p:column>
+ 
+<!--  			<p:column headerText="Total Apontadores"> -->
+<!--                 <h:outputText value="#{rotaTotais.totalApontadores}" /> -->
+<!--             </p:column> -->
+            
+<!--             <p:column headerText="Total Pessoas"> -->
+<!--                 <h:outputText value="#{rotaTotais.totalPessoas}" /> -->
+<!--             </p:column> -->
+            
+            <p:column headerText="-" width="55" >
+                <h:outputText value="#{rotaTotais.totalViagensReal}" />
+            </p:column>
+            
+<!--             <p:column headerText="Total Distância (PC-PA)"> -->
+<!--                 <h:outputText value="#{rotaTotais.totalDistacia}" /> -->
+<!--             </p:column> -->
+            
+            
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia1}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia2}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia3}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia4}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia5}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia6}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia7}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia8}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia9}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia10}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia11}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia12}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia13}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia14}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia15}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia16}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia17}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia18}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia19}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia20}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia21}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia22}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia23}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia24}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia25}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia26}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia27}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia28}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia29}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia30}" />
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.datasExtenso}"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia31}" />
+       </p:column>
+       
+        </p:dataTable>
+        
+        
+<!--         <p:spacer height="20"/> -->
+        
+<!--         <p:dataTable var="rotaTotalDias" value="#{distribuicaoPipeiroBean.rotaSelecionada}"> -->
+            
+<!--             <p:column headerText="Total Pessoas"> -->
+<!--                 <h:outputText value="#{rotaTotalDias.totalPessoas}" /> -->
+<!--             </p:column> -->
+            
+<!--             <p:column headerText="Total Qtd de Viagens (Real)"> -->
+<!--                 <h:outputText value="#{rotaTotalDias.totalViagensReal}" /> -->
+<!--             </p:column> -->
+            
+<!--             <p:column headerText="Total Distância (PC-PA)"> -->
+<!--                 <h:outputText value="#{rotaTotalDias.totalDistacia}" /> -->
+<!--             </p:column> -->
+            
+<!--         </p:dataTable> -->
+        
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog header="Distribuir Dias" widgetVar="diasEditDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true">
+      
+        <p:outputPanel id="diasEditDetail" style="text-align:center;">
+        
+        <p:messages id="messagesdiasEditDialog" showDetail="true" autoUpdate="true" closable="true" />
+        
+        <p:dataTable id="diasEditDistr" var="paDias" value="#{distribuicaoPipeiroBean.pontoAbastecimentosEdicao}" editable="true" 
+        editMode="cell" emptyMessage="">
+        <f:facet name="header">
+            
+            <p:commandButton   icon="ui-icon-star" value="Distribuição Automática" actionListener="#{distribuicaoPipeiroBean.distribuicaoAutoDias}" update=":form:diasEditDistr,:form:rotaTotaisEdit" process="@this"/>
+        
+        	<p:commandButton   icon="ui-icon-disk" value="Salvar" actionListener="#{distribuicaoPipeiroBean.salvardistribuicaoAutoDias()}" update=":form:diasEditDistr,:form:rotaTotaisEdit" process="@this"/>
+        
+        </f:facet>
+        
+         <p:ajax event="cellEdit" listener="#{distribuicaoPipeiroBean.onCellEditEdit}" update=":form:rotaTotaisEdit"></p:ajax>
+            <p:column headerText="Comunidade Beneficiada" width="300" style="text-align:center;font-size:13px !important">
+                <h:outputText value="#{paDias.comunidade}" />
+            </p:column>
+
+             <p:column headerText="Qtd de Viagens" width="55">
+                <h:outputText value="#{paDias.qtdViagensReal}" />
+            </p:column>
+
+            
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia1)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia1.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia1.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia2)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia2.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia2.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia3)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia3.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia3.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia4)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia4.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia4.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia5)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia5.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia5.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia6)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia6.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia6.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia7)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia7.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia7.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia8)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia8.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia8.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia9)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia9.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia9.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia10)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia10.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia10.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia11)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia11.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia11.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia12)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia12.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia12.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia13)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia13.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia13.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia14)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia14.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia14.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia15)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia15.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia15.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia16)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia16.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia16.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia17)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia17.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia17.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia18)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia18.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia18.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia19)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia19.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia19.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia20)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia20.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia20.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia21)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia21.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia21.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia22)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia22.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia22.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia23)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia23.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia23.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia24)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia24.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia24.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia25)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia25.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia25.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia26)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia26.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia26.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia27)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia27.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia27.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia28)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia28.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia28.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia29)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia29.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia29.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia30)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia30.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia30.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+       <p:column headerText="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.datasExtenso}" style="#{distribuicaoPipeiroBean.colorColumn(distribuicaoPipeiroBean.distribuicaoDias.dia31)}" rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.exibirColuna}">
+           <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia31.dias}" /></f:facet>
+               <f:facet name="input"><p:inputText value="#{paDias.distribuicaoDiasPipeiroDTO.dia31.dias}" /></f:facet>
+           </p:cellEditor>
+       </p:column>
+       
+        </p:dataTable>
+        
+        
+        <p:dataTable var="rotaTotais" id="rotaTotaisEdit" value="#{distribuicaoPipeiroBean.rotaSelecionada}" emptyMessage="">
+        
+            <p:column headerText="-" width="300" style="text-align:center;font-size:13px !important">
+                <h:outputText value="-"  />
+            </p:column>
+ 
+
+            
+            <p:column headerText="-" width="55" >
+                <h:outputText value="#{rotaTotais.totalViagensReal}" />
+            </p:column>
+            
+
+            
+            
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia1.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia1}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia2.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia2}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia3.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia3}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia4.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia4}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia5.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia5}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia6.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia6}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia7.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia7}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia8.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia8}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia9.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia9}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia10.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia10}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia11.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia11}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia12.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia12}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia13.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia13}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia14.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia14}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia15.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia15}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia16.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia16}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia17.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia17}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia18.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia18}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia19.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia19}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia20.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia20}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia21.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia21}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia22.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia22}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia23.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia23}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia24.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia24}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia25.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia25}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia26.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia26}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia27.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia27}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia28.exibirColuna}">
+          <h:outputText value="#{rotaTotais.totalDia28}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia29.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia29}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia30.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia30}" />
+       </p:column>
+       
+       <p:column headerText="-"  rendered="#{distribuicaoPipeiroBean.distribuicaoDias.dia31.exibirColuna}">
+           <h:outputText value="#{rotaTotais.totalDia31}" />
+       </p:column>
+       
+
+        </p:dataTable>
+        
+        
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog header="Sucesso" widgetVar="alertConfirm" modal="true" height="100" style="text-align:center;" resizable="false">
+    	<p:ajax event="close" update=":form"/>
+    	<p:panelGrid columns="1"  layout="grid" style="border: none !important;width: 100%">
+	    	<h:outputText value="Distribuição concluida." />
+	    	<p:commandButton value="Voltar"  type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+	    	process="@this">
+	    	<p:ajax event="click" listener="#{distribuicaoPipeiroBean.fecharAlertConfirm()}"/>
+	    	</p:commandButton>
+    	</p:panelGrid>
+	</p:dialog>		
+            
+	<p:dialog header="Informações da Cidade" widgetVar="cidadeDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="90%" height="90%" position="top">
+   		 <p:ajax event="close" update=":form:rotaPagamento"/>
+        
+        <p:outputPanel id="cidadeDetail" style="text-align:center;">
+        	<p:messages id="messagesCidadeDetail" showDetail="true" autoUpdate="true" closable="true" />
+        	<p:panel>
+        		<p:dataTable id="cidadesVisualizacao" var="cidadesVisualizacao" value="#{distribuicaoPipeiroBean.rpCidade}"
+	    	style="margin-bottom:0;width: 80%" scrollable="true" scrollHeight="350" emptyMessage="">
+	    	
+	    	
+	    		<p:column headerText="Pipeiro" sortBy="#{cidadesVisualizacao.pipeiroDTO.nome}" 
+	    		style="text-align:center;font-size:13px !important;width:350px">
+			        <h:outputText value="#{cidadesVisualizacao.pipeiroDTO.nome}" />
+			    </p:column>
+			    
+			    <p:column headerText="Total de Pontos de Abastecimento" >
+			        <h:outputText value="#{cidadesVisualizacao.totalApontadores}" />
+			    </p:column>
+			    
+			    <p:column headerText="Total de Viagens">
+			        <h:outputText value="#{cidadesVisualizacao.totalViagensReal}" />
+			    </p:column>
+			    
+			    <p:column headerText="Valor Bruto">
+			        <h:outputText value="#{cidadesVisualizacao.valorTotalPA}">
+			        	<f:convertNumber type="currency" currencySymbol="R$" />
+			        </h:outputText>
+			    </p:column>
+			    
+			    <p:column headerText="Imprimir Relatório">
+			    	<p:commandLink update=":form:parametrosDetail" action="#{distribuicaoPipeiroBean.imprimirPlanilhaPagamento()}">
+					    <p:graphicImage id="imprimirRelatorio" value="/images/print.png" />
+			           		<p:tooltip id="imprimirRelatorioTitle" styleClass="tooltip" for="imprimirRelatorio"  >
+				        		<h:outputText value="Imprimir Relatório" escape="false"/>
+				        	</p:tooltip>
+				        	<f:setPropertyActionListener value="#{cidadesVisualizacao.pipeiroDTO.id}" target="#{distribuicaoPipeiroBean.pipeiroSelecionadoImpressao}" />
+			        </p:commandLink>
+		        </p:column>
+			    
+			    <p:column headerText="Imprimir Planilha Distr.">
+			       <p:commandLink update=":form:parametrosDetail" oncomplete="PF('parametrosDialog').show()" action="#{distribuicaoPipeiroBean.recuperarParametros}">
+				    <p:graphicImage id="imprimirVisualizacao" value="/images/print.png" />
+		           		<p:tooltip id="imprimirVisualizaTitle" styleClass="tooltip" for="imprimirVisualizacao"  >
+			        		<h:outputText value="Imprimir Planilha Distr." escape="false"/>
+			        	</p:tooltip>
+			        	<f:setPropertyActionListener value="#{cidadesVisualizacao.pipeiroDTO.id}" target="#{distribuicaoPipeiroBean.pipeiroSelecionadoImpressao}" />
+			        </p:commandLink>
+		        </p:column>
+			    
+	    	</p:dataTable>
+        	</p:panel>
+        	
+                <p:panel>
+        	<p:fieldset legend="Definir Assinaturas" style="margin-bottom:20px;width: 50%">
+                	<p:dataTable id="assinaturas" var="assinaturas" value="#{distribuicaoPipeiroBean.assinaturas}" 
+                	editable="true" style="margin-bottom:0;width: 100%">
+
+				       <p:ajax event="rowEdit" listener="#{distribuicaoPipeiroBean.onRowEdit}" update=":form:assinaturas" />
+<!-- 				       <p:ajax event="cellEdit" listener="#{dtEditView.onCellEditAssinaturas}" update=":form:cidadeDetail" /> -->
+				 
+				       <p:column headerText="Cargo">
+				               <h:outputText value="#{assinaturas.cargo}" />
+				       </p:column>
+				 
+				       <p:column headerText="Nome">
+				           <p:cellEditor>
+				               <f:facet name="output"><h:outputText value="#{assinaturas.nome}" /></f:facet>
+				               <f:facet name="input"><p:inputText value="#{assinaturas.nome}" style="width:100%" label="Nome"/></f:facet>
+				           </p:cellEditor>
+				       </p:column>
+				       
+				       <p:column style="width:32px">
+				           <p:rowEditor />
+				       </p:column>
+				       
+				     </p:dataTable>
+            </p:fieldset>
+            
+            <h:outputLabel value="#{distribuicaoPipeiroBean.mesAnoSelecionadoExtenso}" style="font-weight:bold"/>
+                </p:panel>
+        </p:outputPanel>
+    </p:dialog>  
+    
+    <p:dialog header="Editar Distribuição" widgetVar="editarDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="90%" height="90%" position="top">        
+        <p:outputPanel id="editarDetail" style="text-align:center;">
+        	<p:messages id="messagesEditarDetail" showDetail="true" autoUpdate="true" closable="true" />
+        	<p:panel>
+        		<p:dataTable id="interacaoDistribuicao" var="interacaoDistribuicao" value="#{distribuicaoPipeiroBean.interacaoDistribuicao}"
+	    	style="margin-bottom:0;width: 80%" scrollable="true" emptyMessage="">
+	    	
+	    	
+	    		<p:column headerText="Pipeiro" sortBy="#{interacaoDistribuicao.pipeiroDTO.nome}" 
+	    		style="text-align:center;font-size:13px !important;width:350px">
+			        <h:outputText value="#{interacaoDistribuicao.pipeiroDTO.nome}" />
+			    </p:column>
+			    
+			    <p:column headerText="Total de Pontos de Abastecimento" >
+			        <h:outputText value="#{interacaoDistribuicao.totalApontadores}" />
+			    </p:column>
+			    
+			     <p:column headerText="Editar Distribuição" >
+			        <p:commandLink action="#{distribuicaoPipeiroBean.editarDistribuicaoPA()}" icon="ui-icon-search" update=":form:diasEditDistr,:form:rotaTotaisEdit">
+	           			<p:graphicImage id="modify" value="/images/modify.gif"/>
+		        		<f:setPropertyActionListener value="#{interacaoDistribuicao}" target="#{distribuicaoPipeiroBean.interacaoDistribuicaoSelecionado}" />
+		        	</p:commandLink>
+			    </p:column>
+			    
+	    	</p:dataTable>
+        	</p:panel>
+        </p:outputPanel>
+    </p:dialog>  
+    
+     <p:dialog header="Redução" widgetVar="reducaoDialog" width="25%" height="50%" style="text-align:center;" resizable="false">
+    	<p:ajax event="close" update=":form:rotaDetail"/>
+    	<p:outputPanel id="reducaoDetail" style="text-align:center;">
+	    	<p:panelGrid columns="1"  layout="grid" style="border: none !important;width: 100%">
+	    	<p:messages id="messagesReducao" showDetail="true" autoUpdate="true" closable="true" />
+		    	<h:outputLabel for="minMax" value="Quantidade de viagens real: " />
+        		<p:spinner id="minMax" value="#{distribuicaoPipeiroBean.reducaoViagens}" max="#{distribuicaoPipeiroBean.pontoAbastecimentoSelecionado.qtdViagensReal}" >
+        		<p:ajax event="change" update="@this" process="@this"/>
+        		</p:spinner>
+        		
+<!--         		<h:outputLabel for="obsPA" value="Obversação:" style="font-weight:bold"/> -->
+<!--   				<p:inputText  id="obsPA" value="#{distribuicaoPipeiroBean.pontoAbastecimentoSelecionado.obs}"/> -->
+					<h3>Observação</h3>
+					<p:inputTextarea rows="5" cols="30" counter="display" 
+					value="#{distribuicaoPipeiroBean.obsReducao}" 
+					maxlength="200" counterTemplate="{0} Caracteres restante.">
+					<p:ajax event="change" update="@this" process="@this"/>
+					</p:inputTextarea>
+				    <h:outputText id="display" />
+		    	
+		    	<p:commandButton value="Confirmar"  type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" >
+		    	<p:ajax event="click" listener="#{distribuicaoPipeiroBean.reduzirViagens()}" execute="@form"/>
+		    	</p:commandButton>
+	    	</p:panelGrid>
+	    </p:outputPanel>
+	</p:dialog>	
+	
+	<p:dialog header="Definir Parâmetros" widgetVar="parametrosDialog" modal="true" 
+	style="text-align:center;" resizable="true">
+    	<p:outputPanel id="parametrosDetail" style="text-align:center;">
+    	<p:panelGrid columns="1" style="border: none !important;width: 100%">
+    	<p:messages id="messagesParametros" showDetail="true" autoUpdate="true" closable="true" />
+	    	<h:outputLabel for="numLacre" value="Número Lacre:" style="font-weight:bold"/>
+  			<p:inputMask mask="9?999999"  id="numLacre" value="#{distribuicaoPipeiroBean.numLacre}" required="true">
+  			<p:ajax event="change" update="@this" process="@this"/>
+  			</p:inputMask>
+  			
+  			<h:outputLabel for="numOS" value="Número Ordem de Serviço:" style="font-weight:bold"/>
+  			<p:inputMask mask="9?99"  id="numOS" value="#{distribuicaoPipeiroBean.numOS}" required="true">
+  			<p:ajax event="change" update="@this" process="@this"/>
+  			</p:inputMask>
+  			
+  			<h:outputLabel for="dataSorteio" value="Data Sorteio:" style="font-weight:bold"/>
+  			<p:calendar id="dataSorteio" value="#{distribuicaoPipeiroBean.dataSorteio}"  locale="pt_BR" navigator="true" pattern="d/MM/yyyy">
+  			<p:ajax event="dateSelect" update="@this" process="@this"/>
+  			</p:calendar>
+  			
+  			<h:outputLabel for="numBAR" value="Número BAR:" style="font-weight:bold"/>
+  			<p:inputMask mask="9?9"  id="numBAR" value="#{distribuicaoPipeiroBean.numBAR}" required="true">
+  			<p:ajax event="change" update="@this" process="@this"/>
+  			</p:inputMask>
+  			
+  			<h:outputLabel for="dataBAR" value="Data BAR:" style="font-weight:bold"/>
+  			<p:calendar id="dataBAR" value="#{distribuicaoPipeiroBean.dataBAR}"  locale="pt_BR" navigator="true" pattern="d/MM/yyyy">
+  			<p:ajax event="dateSelect" update="@this" process="@this"/>
+  			</p:calendar>
+  				
+	    	<p:commandButton value="Confirmar"  type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+	    	process="@this">
+	    	<p:ajax event="click" listener="#{distribuicaoPipeiroBean.imprimirRelatorioCarradas()}"/>
+	    	</p:commandButton>
+    	</p:panelGrid>
+    	</p:outputPanel>
+	</p:dialog>   
+</h:form>
+ 
+</h:body>
+</ui:define>
+</ui:composition>

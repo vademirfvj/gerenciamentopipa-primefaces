@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Cadastro de Pipeiros</h1>
+	
+	<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:messages id="msgCadastrarPipeiro" showDetail="false"
+				autoUpdate="true" closable="true" />
+
+			<p:tabView id="tabViewPipeiro"
+				style="display: inline-block !important;width:1000px">
+				<p:tab title="Cadastrar">
+					<h:form id="frmCadastrarPipeiro">
+						<p:panelGrid columns="2">
+
+							<h:outputLabel value="Nome: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.nome}" />
+
+							<h:outputLabel value="Cidade: * "
+								style="font-weight:bold" />
+							<p:selectOneMenu
+								value="#{cadastrarPipeiroBean.codCidade}">
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.listaCidade}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="CNH:" style="font-weight:bold" />
+							<p:inputMask mask="9?999999999999999" value="#{cadastrarPipeiroBean.cnh}" />
+							
+							<h:outputLabel value="Validade da CNH: " style="font-weight:bold" />
+							<p:calendar value="#{cadastrarPipeiroBean.validadeCnh}" pattern="dd/MM/yyyy" mask="true" />
+
+							<h:outputLabel value="Identidade: * " style="font-weight:bold" />
+							<p:inputMask mask="9?999999999999999" value="#{cadastrarPipeiroBean.identidade}" />
+							
+							<h:outputLabel value="Orgão Emissor/UF: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.orgaoEmissor}" />
+							
+							<h:outputLabel value="NIT: * " style="font-weight:bold" />
+							<p:inputMask mask="999.99999.99-9" value="#{cadastrarPipeiroBean.nit}" />
+							
+							<h:outputLabel value="CPF: * " style="font-weight:bold" />
+							<p:inputMask mask="999.999.999-99" value="#{cadastrarPipeiroBean.cpf}" />
+
+							<h:outputLabel value="Cód. do Banco: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.codBanco}" />
+							
+							<h:outputLabel value="Banco: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.banco}" />
+							
+							<h:outputLabel value="Agência: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.agencia}" />
+							
+							<h:outputLabel value="Conta: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.conta}" />
+							
+							<h:outputLabel value="Veículo: * " style="font-weight:bold" />
+							
+							<p:selectOneMenu value="#{cadastrarPipeiroBean.codVeiculo}">
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.listaVeiculo}"
+									var="veiculo" itemValue="#{veiculo.id}"
+									itemLabel="#{veiculo.placa}" />
+							</p:selectOneMenu>
+							
+						</p:panelGrid>
+						<div style="float: bottom;">
+
+							<p:commandButton id="btnCadastrarPipeiro"
+								value="Salvar"
+								actionListener="#{cadastrarPipeiroBean.salvar}"
+								update="msgCadastrarPipeiro frmCadastrarPipeiro">
+								<p:confirm header="Confirmação" />
+							</p:commandButton>
+
+							<p:commandButton id="btnCancelarPipeiro"
+								value="Cancelar"
+								actionListener="#{cadastrarPipeiroBean.limpaForm}"
+								update="frmCadastrarPipeiro" />
+						</div>
+					</h:form>
+				</p:tab>
+				<p:tab title="Buscar">
+					<h:form id="frmPesquisarPipeiro">
+						<p:panelGrid columns="2">
+						
+							<h:outputLabel id="lblPipeiro"
+								for="inPipeiro" value="Nome do Pipeiro:  "
+								style="font-weight:bold" />
+							<p:inputText id="inPipeiro"
+								value="#{cadastrarPipeiroBean.pesquisaPipeiro}" />
+
+							<h:outputLabel value="Status:" style="font-weight:bold" />
+
+							<p:selectOneMenu
+								value="#{cadastrarPipeiroBean.pesquisaStatusPipeiro}">
+								<f:selectItem itemLabel="TODOS" itemValue="TODOS" />
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel id="lblCidadePontoColeta" value="Cidade: " style="font-weight:bold" />
+							
+							<p:selectOneMenu 
+								value="#{cadastrarPipeiroBean.codcidadePesquisa}">
+								<f:selectItem itemLabel="Selecionar" itemValue="0" noSelectionOption="true" />
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.listaCidade}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+							
+							<p:commandButton id="btnPesquisarPipeiro"
+								value="Pesquisar" style="margin-left:5px;"
+								actionListener="#{cadastrarPipeiroBean.pesquisar}"
+								update="tabViewPipeiro:dtResultadoPesquisaPipeiro frmPesquisarPipeiro" />
+						</p:panelGrid>
+					</h:form>
+					<br />
+					<p:dataTable id="dtResultadoPesquisaPipeiro"
+						emptyMessage="Nenhum registro foi encontrado."
+						value="#{cadastrarPipeiroBean.listaPesquisa}"
+						var="pipeiro" style="width:100%">
+						
+						<p:column headerText="Pipeiro">
+							<h:outputText value="#{pipeiro.nome}" />
+						</p:column>
+
+						<p:column headerText="Status">
+							<h:outputText value="#{pipeiro.status}" />
+						</p:column>
+						
+						<p:column headerText="Cidade">
+							<h:outputText value="#{pipeiro.nomeCidade}" />
+						</p:column>
+
+						<p:column style="width:30px">
+							
+							<f:facet name="header">
+							<p:commandLink action="#{cadastrarPipeiroBean.imprimirRelatorio()}" icon="ui-icon-search">
+								<p:graphicImage id="imprimirVisualizacaoPipeiro" value="/images/print.png" />
+								<p:tooltip id="imprimirVisualizaTitlePipeiro" styleClass="tooltip" for="imprimirVisualizacaoPipeiro"  >
+									<h:outputText value="Imprimir Relatório" escape="false"/>
+								</p:tooltip>
+				
+							</p:commandLink>
+							</f:facet>
+							
+							<p:commandLink styleClass="ui-icon ui-icon-pencil" title="Editar"
+								oncomplete="PF('dlgEditarPipeiro').show();"
+								actionListener="#{cadastrarPipeiroBean.enviaEditavel(pipeiro)}"
+								update="dlgEditarPipeiro frmEditarPipeiro" />
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+
+		</h:body>
+
+		<p:dialog id="dlgEditarPipeiro"
+			widgetVar="dlgEditarPipeiro" modal="true"
+			resizable="false" closable="false" styleClass="dialog-center-header">
+
+			<f:facet name="header">
+
+				<h:outputText value="Editar Informações" />
+
+			</f:facet>
+
+			<h:form id="frmEditarPipeiro">
+				<p:panelGrid columns="2">
+
+							<h:outputLabel value="Nome:" style="font-weight:bold" />
+							<h:outputLabel value="#{cadastrarPipeiroBean.pipeiroEditavel.nome}" />
+
+							<h:outputLabel value="Cidade:"
+								style="font-weight:bold" />
+							<p:selectOneMenu
+								value="#{cadastrarPipeiroBean.pipeiroEditavel.codCidade}">
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.listaCidade}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="CNH:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.cnh}" />
+							
+							<h:outputLabel value="Validade da CNH: " style="font-weight:bold" />
+							<p:calendar value="#{cadastrarPipeiroBean.pipeiroEditavel.validadeCnh}" pattern="dd/MM/yyyy" mask="true" />
+
+							<h:outputLabel value="Identidade: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.identidade}" />
+							
+							<h:outputLabel value="Orgão Emissor/UF: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.orgaoEmissor}" />
+							
+							<h:outputLabel value="NIT: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.nit}" />
+							
+							<h:outputLabel value="CPF: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.cpf}" />
+
+							<h:outputLabel value="Cód. do Banco: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.codBanco}" />
+							
+							<h:outputLabel value="Banco: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.banco}" />
+							
+							<h:outputLabel value="Agência: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.agencia}" />
+							
+							<h:outputLabel value="Conta: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.conta}" />
+							
+							<h:outputLabel value="Veículo: " style="font-weight:bold" />
+							<p:selectOneMenu value="#{cadastrarPipeiroBean.pipeiroEditavel.codVeiculo}">
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.listaVeiculo}"
+									var="veiculo" itemValue="#{veiculo.id}"
+									itemLabel="#{veiculo.placa}" />
+							</p:selectOneMenu>
+							
+							<h:outputLabel value="Saldo SIAF: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.saldoSiaf}" />
+							
+							<h:outputLabel value="Recurso/Ano: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.recursoAno}" />
+							
+							<h:outputLabel value="Resto à pagar: " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarPipeiroBean.pipeiroEditavel.restoPagar}" />
+
+							<h:outputLabel id="lblPipeiroStatus" value="Status:"
+								style="font-weight:bold" />
+							<p:selectOneMenu
+								value="#{cadastrarPipeiroBean.pipeiroEditavel.status}">
+								<f:selectItems
+									value="#{cadastrarPipeiroBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<div style="float: bottom;">
+
+					<p:commandButton id="btnEditarPipeiro" value="Salvar"
+						actionListener="#{cadastrarPipeiroBean.editar}"
+						onstart="PF('statusDialog').show();"
+						update="tabViewPipeiro:dtResultadoPesquisaPipeiro"
+						oncomplete="PF('dlgEditarPipeiro').hide();PF('statusDialog').hide();">
+						<p:confirm header="Confirmação" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarEditarPipeiro"
+						value="Cancelar"
+						actionListener="#{cadastrarPipeiroBean.limpaEditavel}"
+						oncomplete="PF('dlgEditarPipeiro').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog styleClass="noIcon" global="true">
+			<f:facet name="message">
+				<h:outputText value="Deseja salvar o registro?" style="margin:10px;" />
+				<br />
+			</f:facet>
+			<div style="text-align: center; vertical-align: bottom;">
+				<p:commandButton id="btnConfirmYes" value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" update=":messages" />
+				<p:commandButton id="btnConfirmNo" value="Não" type="button"
+					styleClass="ui-confirmdialog-no" />
+			</div>
+		</p:confirmDialog>
+</ui:define>
+</ui:composition>

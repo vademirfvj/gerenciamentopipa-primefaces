@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Empenho de Recurso</h1>
+	<h1 style="color:black;">TELA EM DESEVOLVIMENTO</h1>
+	
+<p:dialog modal="true" widgetVar="statusDialog" header="Carregando" draggable="false" closable="false" resizable="false">
+    <p:graphicImage value="/images/loadingbar.gif" />
+</p:dialog>	
+
+<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+ 
+	<h:form id="form">
+<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+ 
+    <p:wizard flowListener="#{empenhoBean.onFlowProcess}" widgetVar="wiz" style="display: inline-block !important"
+    backLabel="Anterior" nextLabel="Próximo">
+        <p:tab id="pesquisaEmpenho" title="Perquisar Empenho">
+            <p:panel>
+            <p:fieldset legend="Buscar Recurso" style="margin-bottom:20px">
+                <p:panel style="border-style: hidden !important;">
+	                <p:outputLabel value="Mês:  " />
+	                <h:selectOneMenu id="mes" value="#{empenhoBean.mesSelecionado}" label="Mês" required="true">
+	                <p:ajax event="change" update="@this,form:" listener="#{empenhoBean.habilitarAno}"/>
+			                <f:selectItem itemLabel="Mês" itemValue="" noSelectionOption="true" />
+			                <f:selectItem itemLabel="Janeiro" itemValue="0" />
+			                <f:selectItem itemLabel="Fevereiro" itemValue="1" />
+			                <f:selectItem itemLabel="Março" itemValue="2" />
+			                <f:selectItem itemLabel="Abril" itemValue="3" />
+			                <f:selectItem itemLabel="Maio" itemValue="4" />
+			                <f:selectItem itemLabel="Junho" itemValue="5" />
+			                <f:selectItem itemLabel="Julho" itemValue="6" />
+			                <f:selectItem itemLabel="Agosto" itemValue="7" />
+			                <f:selectItem itemLabel="Setembro" itemValue="8" />
+			                <f:selectItem itemLabel="Outubro" itemValue="9" />
+			                <f:selectItem itemLabel="Novembro" itemValue="10" />
+			                <f:selectItem itemLabel="Dezembro" itemValue="11" />
+			                
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" height="10" />
+					
+					<p:outputLabel value="Ano:  " />
+					<h:selectOneMenu id="ano" value="#{empenhoBean.anoSelecionado}" label="Ano" required="true" disabled="#{empenhoBean.halibitarCampoAno}">
+		                <f:selectItem itemLabel="Ano" itemValue="" noSelectionOption="true" />
+		                <f:selectItem itemLabel="2015" itemValue="2015" />
+		                <f:selectItem itemLabel="2016" itemValue="2016" />
+		                <f:selectItem itemLabel="2017" itemValue="2017" />
+		                <f:selectItem itemLabel="2018" itemValue="2018" />
+		                <f:selectItem itemLabel="2019" itemValue="2019" />
+		                <f:selectItem itemLabel="2020" itemValue="2020" />
+		                <f:selectItem itemLabel="2021" itemValue="2021" />
+		                <f:selectItem itemLabel="2022" itemValue="2022" />
+		                <f:selectItem itemLabel="2023" itemValue="2023" />
+		                <f:selectItem itemLabel="2024" itemValue="2024" />
+		                <f:selectItem itemLabel="2025" itemValue="2025" />
+		                <f:selectItem itemLabel="2026" itemValue="2026" />
+                
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" height="10" />
+					
+					<p:commandButton value="Pesquisar" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form"/>
+	                </p:panel>
+                </p:fieldset>
+                
+                <p:dataTable id="recursoTable" var="recursoTable" value="#{empenhoBean.recursoDTOList}" 
+				style="margin-bottom:0;width: 100%" scrollable="true" scrollHeight="200" emptyMessage=""
+				editable="true" selection="#{empenhoBean.recursoSelecionado}" rowKey="#{recursoTable.nc}">
+				
+			<f:facet name="header">
+           		Recurso Ativo
+       		</f:facet>	
+			
+			<p:column selectionMode="single" style="width:16px;text-align:center"/>
+			
+			<p:column headerText="NC">
+	            <h:outputText value="#{recursoTable.nc}" />
+	        </p:column>
+	        
+	        <p:column headerText="Valor do recurso">
+	            <h:outputText value="#{recursoTable.valor}" >
+	            <f:convertNumber type="currency" currencySymbol="R$" />
+	            </h:outputText>
+	        </p:column>
+	        
+	        <p:column headerText="Saldo">
+	            <h:outputText value="#{empenhoBean.saldo}" >
+	            <f:convertNumber type="currency" currencySymbol="R$" />
+	            </h:outputText>
+	        </p:column>	
+	        
+	        <p:column headerText="Status">
+	            <h:outputText value="#{recursoTable.status}" />
+	        </p:column>
+				
+			<p:column style="width:50px">
+           		<p:rowEditor />
+       		</p:column>
+       		
+       		<p:column style="width:120px">
+           		 <p:commandLink id="excluirRecurso" ajax="true">
+			        <h:outputText value="Excluir recurso" />
+			    </p:commandLink>
+       		</p:column>
+       	
+			</p:dataTable>
+                
+            </p:panel>
+        </p:tab>
+ 
+        <p:tab id="cadastrarEmpenho" title="Cadastrar Empenho">
+            <p:panel>
+            <p:fieldset legend="Informações do recurso selecionado" style="margin-bottom:20px">
+	            <p:panel style="border-style: hidden !important;">
+	            	<h:outputLabel for="nc" value="Natureza do Crédito: " style="font-weight:bold"/>
+	  				<p:inputText  id="nc" value="NC TESTE" style="width:300px !important;" 
+	  				readonly="true"/>
+	  			
+	  				<p:spacer width="20" height="10" />
+	  			
+	  			    <p:outputLabel value="Mês:  " style="font-weight:bold"/>
+	  			    <p:inputText  id="mesSelecionado" value="#{empenhoBean.mesSelecionadoExtenso}" 
+	  			    style="width:80px !important;" readonly="true"/>
+						
+					<p:outputLabel value="Ano:  " style="font-weight:bold"/>
+					<p:inputText  id="anoSelecionado" value="#{empenhoBean.anoSelecionado}" 
+					style="width:60px !important;" readonly="true"/>
+	  				
+	  				<h:outputLabel for="saldoSelecionado" value="Saldo: " style="font-weight:bold"/>
+	  				<p:inputText  id="saldoSelecionado" value="#{empenhoBean.saldo}" readonly="true">
+	  				<f:convertNumber type="currency" currencySymbol="R$" />
+	  				</p:inputText>
+	            </p:panel>
+            </p:fieldset>
+            
+            <p:dataTable id="pipeiroTable" var="pipeiroTable" value="#{empenhoBean.valorTeste}" 
+				style="margin-bottom:0;width: 100%" scrollable="true" scrollHeight="200" emptyMessage=""
+				editable="true">
+				
+				<p:column headerText="Nome do Pipeiro">
+		            <h:outputText value="#{pipeiroTable.nc}" />
+		        </p:column>
+		        
+		        <p:column headerText="Valor do Empenho R$">
+		            <h:outputText value="#{pipeiroTable.valor}" >
+		            	<f:convertNumber type="currency" currencySymbol="R$" />
+		            </h:outputText>
+		        </p:column>
+		        
+		        <p:column style="width:50px">
+	           		<p:rowEditor />
+	       		</p:column>
+       		
+	       		<p:column style="width:200px">
+	           		 <p:commandLink id="excluirRecurso" ajax="true">
+				        <h:outputText value="Excluir empenho" />
+				    </p:commandLink>
+	       		</p:column>
+	        
+	        </p:dataTable>
+	        
+	        
+	        <p:fieldset legend="Adicionar Pipeiro" style="margin-bottom:20px">
+	        
+	        	<p:outputLabel value="Pipeiro: "/>
+				<p:selectOneMenu id="pipeiroPendente" value="#{distribuicaoPipeiroBean.pipeiroSelecionado}" >
+		          	<f:selectItem itemLabel="Não Informado" itemValue="Nao Informado" noSelectionOption="true" />
+		          	<f:selectItem itemLabel="JOÃO GOMES SAMPAIO" itemValue="JOÃO GOMES SAMPAIO"/>
+	        	</p:selectOneMenu>
+	        	
+	        	<p:spacer width="20" height="10" />
+	        	
+	        	<p:outputLabel value="Valor Empenho:  "/>
+					<p:inputText  id="valorEmpenhoPipeiro" value=""/>
+	        	
+	        	<p:spacer width="20" height="10" />
+	        	
+	        	<p:commandButton value="Adicionar" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form"/>
+	        	
+	        	<p:spacer width="20" height="10" />
+	        	
+	        	<p:commandButton value="Adicionar Todos" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form"/>
+	        	
+	        </p:fieldset>
+	        
+	        <p:commandButton value="Editar DIEx" icon="ui-icon-pencil" update=":form:diexDetail" oncomplete="PF('diexDialog').show()" />
+	        
+            </p:panel>
+        </p:tab>
+    </p:wizard>
+
+    <p:dialog header="DIEx" widgetVar="diexDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true">
+   		 <p:ajax event="close" update=":form"/>
+        
+        <p:outputPanel id="diexDetail" style="text-align:center;">
+        
+        <p:fieldset legend="Informações do recurso selecionado" style="margin-bottom:20px">
+	            <p:panel style="border-style: hidden !important;">
+	            	<h:outputLabel for="ncDIalog" value="Natureza do Crédito: " style="font-weight:bold"/>
+	  				<p:inputText  id="ncDIalog" value="NC TESTE" style="width:300px !important;" 
+	  				readonly="true"/>
+	  			
+	  				<p:spacer width="20" height="10" />
+	  			
+	  			    <p:outputLabel value="Mês:  " style="font-weight:bold"/>
+	  			    <p:inputText  id="mesSelecionadoDialog" value="#{empenhoBean.mesSelecionadoExtenso}" 
+	  			    style="width:80px !important;" readonly="true"/>
+						
+					<p:outputLabel value="Ano:  " style="font-weight:bold"/>
+					<p:inputText  id="anoSelecionadoDialog" value="#{empenhoBean.anoSelecionado}" 
+					style="width:60px !important;" readonly="true"/>
+	  				
+	  				<h:outputLabel for="saldoSelecionadoDialog" value="Saldo: " style="font-weight:bold"/>
+	  				<p:inputText  id="saldoSelecionadoDialog" value="#{empenhoBean.saldo}" readonly="true">
+	  				<f:convertNumber type="currency" currencySymbol="R$" />
+	  				</p:inputText>
+	            </p:panel>
+            </p:fieldset>
+            
+            <p:panel>
+            	<p:panelGrid columns="2">
+            		
+            		<h:outputLabel for="numdiex" value="Número DIEx " style="font-weight:bold"/>
+	  				<p:inputText  id="numdiex" value=""/>
+	  				
+	  				<h:outputLabel for="calendarDiex" value="Data DIEx " style="font-weight:bold"/>
+	  				<p:calendar id="calendarDiex" locale="pt_BR" navigator="true" pattern="d/MM/yyyy"/>
+            		
+            		<h:outputLabel for="nomecoord" value="Nome Coordenador SOP " style="font-weight:bold"/>
+	  				<p:inputText  id="nomecoord" value="NOME"/>
+	  				
+	  				<h:outputLabel for="funcaocoord" value="Função Coordenador SOP " style="font-weight:bold"/>
+	  				<p:inputText  id="funcaocoord" value="FUNÇÃO"/>
+	  				
+	  				<h:outputLabel for="nomeord" value="Nome Ordenador SOP " style="font-weight:bold"/>
+	  				<p:inputText  id="nomeord" value="NOME"/>
+	  				
+	  				<h:outputLabel for="funcaoord" value="Função Ordenador SOP " style="font-weight:bold"/>
+	  				<p:inputText  id="funcaoord" value="FUNÇÃO"/>
+  				
+            	</p:panelGrid>
+            	
+            	<p:separator />
+            	
+            	<p:commandButton value="Voltar" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form"/>
+            	<p:commandButton value="Salvar" actionListener="#{distribuicaoPipeiroBean.confirmarDistribuicao}" update=":form"/>
+            	
+            	
+            </p:panel>
+        
+        </p:outputPanel>
+        
+    </p:dialog>    
+</h:form>
+ 
+</h:body>
+</ui:define>
+</ui:composition>

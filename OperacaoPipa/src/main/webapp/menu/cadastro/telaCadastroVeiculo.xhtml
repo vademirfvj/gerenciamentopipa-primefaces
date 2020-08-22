@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Cadastro de Veículos</h1>
+	
+<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:messages id="msgCadastrarVeiculo" showDetail="false"
+				autoUpdate="true" closable="true" />
+
+			<p:tabView id="tabViewVeiculo"
+				style="display: inline-block !important;width:1000px">
+				<p:tab title="Cadastrar">
+					<h:form id="frmCadastrarVeiculo">
+						<p:panelGrid columns="2">
+
+							<h:outputLabel value="Placa:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.placa}" />
+
+							<h:outputLabel value="Renavam:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.renavam}" />
+							
+							<h:outputLabel value="Capacidade:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.capacidadePipa}" />
+
+							<h:outputLabel value="Marca/Modelo:"	style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.marcaModelo}" />
+
+						</p:panelGrid>
+						<div style="float: bottom;">
+
+							<p:commandButton id="btnCadastrarVeiculo" value="Salvar"
+								actionListener="#{cadastrarVeiculoBean.salvar}"
+								update="msgCadastrarVeiculo frmCadastrarVeiculo">
+								<p:confirm header="Confirmação" />
+							</p:commandButton>
+
+							<p:commandButton id="btnCancelarVeiculo" value="Cancelar"
+								actionListener="#{cadastrarVeiculoBean.limpaForm}"
+								update="frmCadastrarVeiculo" />
+						</div>
+					</h:form>
+				</p:tab>
+				<p:tab title="Buscar">
+					<h:form id="frmPesquisarVeiculo">
+						<p:panelGrid columns="5">
+							<h:outputLabel id="lblVeiculo" for="inVeiculo" value="Veiculo:  "
+								style="font-weight:bold" />
+							<p:inputText id="inVeiculo"
+								value="#{cadastrarVeiculoBean.pesquisaVeiculo}" />
+
+							<h:outputLabel value="Status:" style="font-weight:bold" />
+
+							<p:selectOneMenu
+								value="#{cadastrarVeiculoBean.pesquisaStatusVeiculo}">
+								<f:selectItem itemLabel="TODOS" itemValue="TODOS" />
+								<f:selectItems value="#{cadastrarVeiculoBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+
+							<p:commandButton id="btnPesquisarVeiculo" value="Pesquisar"
+								style="margin-left:5px;"
+								actionListener="#{cadastrarVeiculoBean.pesquisar}"
+								update="tabViewVeiculo:dtResultadoPesquisaVeiculo frmPesquisarVeiculo" />
+						</p:panelGrid>
+					</h:form>
+					<br />
+					<p:dataTable id="dtResultadoPesquisaVeiculo"
+						emptyMessage="Nenhum registro foi encontrado."
+						value="#{cadastrarVeiculoBean.listaPesquisa}" var="veiculo"
+						style="width:100%">
+						<p:column headerText="Veiculo">
+							<h:outputText value="#{veiculo.placa}" />
+						</p:column>
+
+						<p:column headerText="Status">
+							<h:outputText value="#{veiculo.status}" />
+						</p:column>
+
+						<p:column style="width:30px">
+							
+							<f:facet name="header">
+							<p:commandLink action="#{cadastrarVeiculoBean.imprimirRelatorio()}" icon="ui-icon-search">
+								<p:graphicImage id="imprimirVisualizacaoVeiculo" value="/images/print.png" />
+								<p:tooltip id="imprimirVisualizaTitleVeiculo" styleClass="tooltip" for="imprimirVisualizacaoVeiculo"  >
+									<h:outputText value="Imprimir Relatório" escape="false"/>
+								</p:tooltip>
+				
+							</p:commandLink>
+							</f:facet>
+							<p:commandLink styleClass="ui-icon ui-icon-pencil" title="Editar"
+								oncomplete="PF('dlgEditarVeiculo').show();"
+								actionListener="#{cadastrarVeiculoBean.enviaEditavel(veiculo)}"
+								update="dlgEditarVeiculo frmEditarVeiculo" />
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+
+		</h:body>
+
+		<p:dialog id="dlgEditarVeiculo" widgetVar="dlgEditarVeiculo"
+			modal="true" resizable="false" closable="false"
+			styleClass="dialog-center-header">
+
+			<f:facet name="header">
+
+				<h:outputText value="Editar Informações" />
+
+			</f:facet>
+
+			<h:form id="frmEditarVeiculo">
+				<p:panelGrid columns="2">
+
+							<h:outputLabel value="Placa:" style="font-weight:bold" />
+							<h:outputLabel value="#{cadastrarVeiculoBean.veiculoEditavel.placa}" />
+
+							<h:outputLabel value="Renavam:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.veiculoEditavel.renavam}" />
+							
+							<h:outputLabel value="Capacidade:" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.veiculoEditavel.capacidadePipa}" />
+
+							<h:outputLabel value="Marca/Modelo"	style="font-weight:bold" />
+							<p:inputText value="#{cadastrarVeiculoBean.veiculoEditavel.marcaModelo}" />
+
+							<h:outputLabel id="lblVeiculoStatus" value="Status:"
+								style="font-weight:bold" />
+							<p:selectOneMenu value="#{cadastrarVeiculoBean.veiculoEditavel.status}">
+								<f:selectItems value="#{cadastrarVeiculoBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<div style="float: bottom;">
+
+					<p:commandButton id="btnEditarVeiculo" value="Salvar"
+						actionListener="#{cadastrarVeiculoBean.editar}"
+						onstart="PF('statusDialog').show();"
+						update="tabViewVeiculo:dtResultadoPesquisaVeiculo"
+						oncomplete="PF('dlgEditarVeiculo').hide();PF('statusDialog').hide();">
+						<p:confirm header="Confirmação" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarEditarVeiculo" value="Cancelar"
+						actionListener="#{cadastrarVeiculoBean.limpaEditavel}"
+						oncomplete="PF('dlgEditarVeiculo').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog styleClass="noIcon" global="true">
+			<f:facet name="message">
+				<h:outputText value="Deseja salvar o registro?" style="margin:10px;" />
+				<br />
+			</f:facet>
+			<div style="text-align: center; vertical-align: bottom;">
+				<p:commandButton id="btnConfirmYes" value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" update=":messages" />
+				<p:commandButton id="btnConfirmNo" value="Não" type="button"
+					styleClass="ui-confirmdialog-no" />
+			</div>
+		</p:confirmDialog>
+</ui:define>
+</ui:composition>

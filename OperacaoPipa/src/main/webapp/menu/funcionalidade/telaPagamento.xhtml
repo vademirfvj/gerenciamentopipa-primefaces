@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Pagamento de Autônomo</h1>
+    <h1 style="color:black;">TELA EM DESEVOLVIMENTO</h1>
+	
+<p:dialog modal="true" widgetVar="statusDialog" header="Carregando" draggable="false" closable="false" resizable="false">
+    <p:graphicImage value="/images/loadingbar.gif" />
+</p:dialog>	
+
+<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+ 
+	<h:form id="form">
+<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+ 
+    <p:panel>
+                <p:fieldset style="margin-bottom:20px">
+                
+                <p:panelGrid columns="1">
+	                <p:panel>
+	                <p:outputLabel value="Mês:  " />
+	                <h:selectOneMenu id="mes" value="#{recursoBean.mesSelecionado}" label="Mês" required="true">
+	                <p:ajax event="change" update="@this,form:" listener="#{recursoBean.habilitarAno}"/>
+			                <f:selectItem itemLabel="Mês" itemValue="" noSelectionOption="true" />
+			                <f:selectItem itemLabel="Janeiro" itemValue="0" />
+			                <f:selectItem itemLabel="Fevereiro" itemValue="1" />
+			                <f:selectItem itemLabel="Março" itemValue="2" />
+			                <f:selectItem itemLabel="Abril" itemValue="3" />
+			                <f:selectItem itemLabel="Maio" itemValue="4" />
+			                <f:selectItem itemLabel="Junho" itemValue="5" />
+			                <f:selectItem itemLabel="Julho" itemValue="6" />
+			                <f:selectItem itemLabel="Agosto" itemValue="7" />
+			                <f:selectItem itemLabel="Setembro" itemValue="8" />
+			                <f:selectItem itemLabel="Outubro" itemValue="9" />
+			                <f:selectItem itemLabel="Novembro" itemValue="10" />
+			                <f:selectItem itemLabel="Dezembro" itemValue="11" />
+			                
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" height="10" />
+					
+					<p:outputLabel value="Ano:  " />
+					<h:selectOneMenu id="ano" value="#{recursoBean.anoSelecionado}" label="Ano" required="true" disabled="#{recursoBean.halibitarCampoAno}">
+		                <f:selectItem itemLabel="Ano" itemValue="" noSelectionOption="true" />
+		                <f:selectItem itemLabel="2015" itemValue="2015" />
+		                <f:selectItem itemLabel="2016" itemValue="2016" />
+		                <f:selectItem itemLabel="2017" itemValue="2017" />
+		                <f:selectItem itemLabel="2018" itemValue="2018" />
+		                <f:selectItem itemLabel="2019" itemValue="2019" />
+		                <f:selectItem itemLabel="2020" itemValue="2020" />
+		                <f:selectItem itemLabel="2021" itemValue="2021" />
+		                <f:selectItem itemLabel="2022" itemValue="2022" />
+		                <f:selectItem itemLabel="2023" itemValue="2023" />
+		                <f:selectItem itemLabel="2024" itemValue="2024" />
+		                <f:selectItem itemLabel="2025" itemValue="2025" />
+		                <f:selectItem itemLabel="2026" itemValue="2026" />
+                
+					</h:selectOneMenu>
+					
+					<p:spacer width="20" height="10" />
+
+					<h:outputLabel for="dataRecibo" value="Data do Recibo "/>
+	  				<p:calendar id="dataRecibo" locale="pt_BR" navigator="true" pattern="d/MM/yyyy"/>
+					
+					
+	                </p:panel>
+	                
+	                <p:panel>
+	                	<p:outputLabel value="Pipeiro: "/>
+						<p:selectOneMenu id="pipeiroPendente" value="#{distribuicaoPipeiroBean.pipeiroSelecionado}" >
+				          	<f:selectItem itemLabel="Não Informado" itemValue="Nao Informado" noSelectionOption="true" />
+				          	<f:selectItem itemLabel="JOÃO GOMES SAMPAIO" itemValue="JOÃO GOMES SAMPAIO"/>
+			        	</p:selectOneMenu>
+			        	
+			        	<p:spacer width="20" height="10" />
+			        	
+			        	<h:outputLabel for="saldoSiaf" value="Saldo SIAF   "/>
+		  				<p:inputText  id="saldoSiaf" value="R$ 10.000.00" 
+		  				style="font-weight:bold" disabled="true">
+		  				</p:inputText>
+		  				
+		  				<p:spacer width="20" height="10" />
+		  				
+		  				<p:outputLabel value="Cidade  " />
+		  			    <p:inputText  id="cidade" value="ALCANTIL" 
+		  			    style="font-weight:bold;" disabled="true"/>
+	  			    
+	                </p:panel>
+	                
+	                <p:panel>
+	                	<p:outputLabel value="Valor  "/>
+		  			    <p:inputText  id="valorBruto" value=""/>
+		  			    
+		  			    <p:spacer width="20" height="10" />
+		  			    
+		  			    <h:selectOneMenu id="remessa" value="#{pagamentoBean.remessa}" label="Mês" required="true">
+			                <f:selectItem itemLabel="1" itemValue="1" />
+			                <f:selectItem itemLabel="2" itemValue="2" />
+			                <f:selectItem itemLabel="3" itemValue="3" />
+			                <f:selectItem itemLabel="4" itemValue="4" />
+						</h:selectOneMenu>
+		  			    
+		  			    <p:spacer width="20" height="10" />
+		  			    
+		  			    <p:commandButton value="Calcular"  icon="ui-icon-arrowrefresh-1-w" update=":form"/>
+  				
+  						<p:spacer width="20" height="10" />
+  				
+  						<p:commandButton value="Salvar"  icon="ui-icon-disk" update=":form"/>
+  						
+  						<p:spacer width="20" height="10" />
+  				
+  						<p:commandButton value="Limpar" icon="ui-icon-check" update=":form"/>
+		  			    
+	                </p:panel>
+	              </p:panelGrid>
+                </p:fieldset>
+                
+                <p:fieldset legend="Recibo de Pagamento de Autônomos - RPA" style="text-align:left; margin-bottom:20px">
+                <p:panelGrid styleClass="topAligned" columns="2" cellpadding="5" style="display:block" cellspacing="5">
+                <p:panel>
+                	<p:panelGrid columns="2">
+                	
+                	<h:outputLabel for="numeroRecibo" value="Número do Recibo: " style="font-weight:bold"/>
+	  				<h:outputText  id="numeroRecibo" style="font-weight:bold" value="001"/>
+	                	
+                	</p:panelGrid>
+                	
+	                <p:panelGrid style="width:100%;margin-top:20px">
+	                	 <f:facet name="header">
+					        <p:row>
+					            <p:column colspan="2">Especificações</p:column>
+					        </p:row>
+					    </f:facet>
+					    
+					    <p:row>
+						   <p:column style="font-weight: bold;">I. Valor do serviço prestado</p:column>
+						   <p:column style="font-weight: bold;">R$ 10.000,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">II. Base Cálculo IRRF (10% - 11%)</p:column>
+						   <p:column style="font-weight: bold;">R$ 100,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">III. Base Cálculo INSS 20%</p:column>
+						   <p:column style="font-weight: bold;">R$ 200,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">IV. INSS UG (Patronal) 20% de III</p:column>
+						   <p:column style="font-weight: bold;">R$ 40,00</p:column>
+						</p:row>
+	                
+	                </p:panelGrid>
+	                
+	                    <p:panelGrid style="width:100%;margin-top:20px">
+	                	 <f:facet name="header">
+					        <p:row>
+					            <p:column colspan="2">Descontos</p:column>
+					        </p:row>
+					    </f:facet>
+					    
+					    <p:row>
+						   <p:column style="font-weight: bold;">V. INSS 11%</p:column>
+						   <p:column style="font-weight: bold;">R$ 110,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">VI. SEST/SENAT 2,5%</p:column>
+						   <p:column style="font-weight: bold;">R$ 250,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">VII. IRRF</p:column>
+						   <p:column style="font-weight: bold;">R$ 100,00</p:column>
+						</p:row>
+						
+						<p:row>
+						   <p:column style="font-weight: bold;">VIII. Soma (V+VI)</p:column>
+						   <p:column style="font-weight: bold;">R$ 360,00</p:column>
+						</p:row>
+	                
+	                </p:panelGrid>
+	                
+	                <p:spacer width="20" height="30" />
+	                
+	                <p:panelGrid columns="2">
+	                <h:outputLabel for="valorLiquido" value="Valor Líquido: " style="font-weight:bold"/>
+	  				<h:outputText  id="valorLiquido" style="font-weight:bold" value="R$ 9.180,00"/>
+	  				</p:panelGrid>
+	             </p:panel>
+	             
+	             <p:panel>
+	             	<p:tabView>
+				        <p:tab title="Tabela IRRF">
+				            <h:panelGrid columns="1">
+				            	<p:panel>
+				                <p:outputLabel value="Até  " />
+		  			    		<p:inputText  id="ate" value="1903.98" style="width:80px !important;"/>
+		  			    		<p:spacer width="20" height="10" />
+		  			    		 <p:outputLabel value="Resultado  " />
+		  			    		<p:inputText  id="resultado" value=".00" style="width:80px !important;"/>
+		  			    		</p:panel>
+		  			    		
+		  			    		<p:panel>
+				                <p:outputLabel value="De  " />
+		  			    		<p:inputText  id="de" value="1903.99" style="width:60px !important;"/>
+		  			    		 <p:outputLabel value="Até  " />
+		  			    		<p:inputText  id="ate1" value="2826.65" style="width:60px !important;"/>
+		  			    		<p:outputLabel value="Aliquota  " />
+		  			    		<p:inputText  id="aliquota" value="7.5" style="width:35px !important;"/>
+		  			    		<p:outputLabel value="Deduzir  " />
+		  			    		<p:inputText  id="deduzir" value="142.80" style="width:50px !important;"/>
+		  			    		</p:panel>
+		  			    		
+		  			    		<p:panel>
+				                <p:outputLabel value="De  " />
+		  			    		<p:inputText  id="de1" value="2826.66" style="width:60px !important;"/>
+		  			    		 <p:outputLabel value="Até  " />
+		  			    		<p:inputText  id="ate2" value="3751.05" style="width:60px !important;"/>
+		  			    		<p:outputLabel value="Aliquota  " />
+		  			    		<p:inputText  id="aliquota1" value="15.0" style="width:35px !important;"/>
+		  			    		<p:outputLabel value="Deduzir  " />
+		  			    		<p:inputText  id="deduzir2" value="354.80" style="width:50px !important;"/>
+		  			    		</p:panel>
+		  			    		
+		  			    		<p:panel>
+				                <p:outputLabel value="De  " />
+		  			    		<p:inputText  id="de2" value="3751.06" style="width:60px !important;"/>
+		  			    		 <p:outputLabel value="Até  " />
+		  			    		<p:inputText  id="ate3" value="4664.68" style="width:60px !important;"/>
+		  			    		<p:outputLabel value="Aliquota  " />
+		  			    		<p:inputText  id="aliquot2" value="22.5" style="width:35px !important;"/>
+		  			    		<p:outputLabel value="Deduzir  " />
+		  			    		<p:inputText  id="deduzir3" value="636.13" style="width:50px !important;"/>
+		  			    		</p:panel>
+		  			    		
+		  			    		<p:panel>
+				                <p:outputLabel value="Acima  " />
+		  			    		<p:inputText  id="acima" value="4664.68" style="width:60px !important;"/>
+		  			    		<p:outputLabel value="Aliquota  " />
+		  			    		<p:inputText  id="aliquota3" value="27.5" style="width:35px !important;"/>
+		  			    		<p:outputLabel value="Deduzir  " />
+		  			    		<p:inputText  id="deduzir4" value="869.36" style="width:50px !important;"/>
+		  			    		</p:panel>
+				            </h:panelGrid>
+				        </p:tab>
+				        <p:tab title="Atualizar alíquotas">
+				            <h:panelGrid columns="2">
+				                 <p:outputLabel value="Base de cálculo IRRF (%) " style="font-weight:bold"/>
+		  			    		<p:inputText  id="baseIrrf" value="10" style="width:100px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Base de cálculo INSS (%) " style="font-weight:bold"/>
+		  			    		<p:inputText  id="baseInss" value="20" style="width:100px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Alíquota INSS (%) " style="font-weight:bold"/>
+		  			    		<p:inputText  id="aliquotaInss" value="11" style="width:100px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Alíquota Sest/Senat (%) " style="font-weight:bold"/>
+		  			    		<p:inputText  id="aliquotaSestSenat" value="2.5" style="width:100px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Retenção máxima do INSS " style="font-weight:bold"/>
+		  			    		<p:inputText  id="retencaoInss" value="513.01" style="width:100px !important;"/>
+				            </h:panelGrid>
+				        </p:tab>
+				        <p:tab title="Assinaturas">
+				            <h:panelGrid columns="1" style="text-align: center">
+				                <p:outputLabel value="Coodernador da Operação Pipa" style="font-weight:bold"/>
+		  			    		<p:inputText  id="coordOppPipa" value="Alessandro Rodrigues - Major" style="width:400px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Cargo/Função" style="font-weight:bold"/>
+		  			    		<p:inputText  id="cargoCoord" value="Coodernador da Operação Pipa" style="width:400px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Comandante do Batalhão / OD" style="font-weight:bold"/>
+		  			    		<p:inputText  id="comandante" value="Marcelo Rodrigues" style="width:400px !important;"/>
+		  			    		
+		  			    		<p:outputLabel value="Cargo/Função" style="font-weight:bold"/>
+		  			    		<p:inputText  id="cargoComandante" value="Ordenador de Despesas do 31 BIMtz" style="width:400px !important;"/>
+				            </h:panelGrid>
+				        </p:tab>
+				    </p:tabView>
+	             </p:panel>
+	             </p:panelGrid>   
+                </p:fieldset>
+             
+            </p:panel>
+            
+</h:form>
+ 
+</h:body>
+</ui:define>
+</ui:composition>

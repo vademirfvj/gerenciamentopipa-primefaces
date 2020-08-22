@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+ 
+<ui:define name="corpo">
+<h:body>
+	<h1 style="color:black;">Cadastro de Usuário</h1>
+	
+<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:messages id="msgCadastrarUsuario" showDetail="false"
+				autoUpdate="true" closable="true" />
+
+			<p:tabView id="tabViewUsuario"
+				style="display: inline-block !important;width:1000px">
+				<p:tab title="Cadastrar">
+					<h:form id="frmCadastrarUsuario">
+						<p:panelGrid columns="2">
+
+							<h:outputLabel value="Nome: * " style="font-weight:bold" />
+							<p:inputText value="#{cadastrarUsuarioBean.nome}" />
+
+							<h:outputLabel value="Posto/Grad.: * " style="font-weight:bold" />
+							<p:outputPanel>
+							<p:selectOneMenu id="onePostGrad"
+								value="#{cadastrarUsuarioBean.postGrad}">
+								<f:selectItems
+									value="#{cadastrarUsuarioBean.listaPosto}"
+									var="posto" itemValue="#{posto.id}"
+									itemLabel="#{posto.posto}" />
+							</p:selectOneMenu>
+							
+							<p:spacer width="10" height="10" />
+							
+							<p:commandLink update=":frmEditarPosto:postoDetail" oncomplete="PF('postoDialog').show()">
+							<p:graphicImage id="question" value="/images/editarPontos.png"/>
+					   			<p:tooltip styleClass="tooltip" for="question"  >
+			        				<h:outputText value="Editar Posto/Grad." escape="false"/>
+			        		</p:tooltip>
+			        		</p:commandLink>
+							</p:outputPanel>
+							
+							<h:outputLabel value="Email" style="font-weight:bold" />
+							<p:inputText value="#{cadastrarUsuarioBean.email}" />
+
+							<h:outputLabel value="Login: * "	style="font-weight:bold" />
+							<p:inputText value="#{cadastrarUsuarioBean.login}" />
+
+							<h:outputLabel value="Senha: * "	style="font-weight:bold" />
+							<p:password value="#{cadastrarUsuarioBean.senha}" />
+
+						</p:panelGrid>
+						<div style="float: bottom;">
+
+							<p:commandButton id="btnCadastrarUsuario" value="Salvar"
+								actionListener="#{cadastrarUsuarioBean.salvar}"
+								update="msgCadastrarUsuario frmCadastrarUsuario">
+								<p:confirm header="Confirmação" />
+							</p:commandButton>
+
+							<p:commandButton id="btnCancelarUsuario" value="Cancelar"
+								actionListener="#{cadastrarUsuarioBean.limpaForm}"
+								update="frmCadastrarUsuario" />
+						</div>
+					</h:form>
+				</p:tab>
+				<p:tab title="Buscar">
+					<h:form id="frmPesquisarUsuario">
+						<p:panelGrid columns="5">
+							<h:outputLabel id="lblUsuario" for="inUsuario" value="Usuario:  "
+								style="font-weight:bold" />
+							<p:inputText id="inUsuario"
+								value="#{cadastrarUsuarioBean.pesquisaUsuario}" />
+
+							<h:outputLabel value="Status:" style="font-weight:bold" />
+
+							<p:selectOneMenu
+								value="#{cadastrarUsuarioBean.pesquisaStatusUsuario}">
+								<f:selectItem itemLabel="TODOS" itemValue="TODOS" />
+								<f:selectItems value="#{cadastrarUsuarioBean.getStatusEnum()}"
+									var="status" itemLabel="#{status.getLabel()}"
+									itemValue="#{status.getLabel()}" />
+							</p:selectOneMenu>
+
+							<p:commandButton id="btnPesquisarUsuario" value="Pesquisar"
+								style="margin-left:5px;"
+								actionListener="#{cadastrarUsuarioBean.pesquisar}"
+								update="tabViewUsuario:dtResultadoPesquisaUsuario frmPesquisarUsuario" />
+						</p:panelGrid>
+					</h:form>
+					<br />
+					<p:dataTable id="dtResultadoPesquisaUsuario"
+						emptyMessage="Nenhum registro foi encontrado."
+						value="#{cadastrarUsuarioBean.listaPesquisa}" var="usuario"
+						style="width:100%">
+						<p:column headerText="Usuario">
+							<h:outputText value="#{usuario.nome}" />
+						</p:column>
+
+						<p:column headerText="Status">
+							<h:outputText value="#{usuario.status}" />
+						</p:column>
+
+						<p:column style="width:30px">
+							
+							<f:facet name="header">
+							<p:commandLink action="#{cadastrarUsuarioBean.imprimirRelatorio()}" icon="ui-icon-search">
+								<p:graphicImage id="imprimirVisualizacaoUsuario" value="/images/print.png" />
+								<p:tooltip id="imprimirVisualizaTitleUsuario" styleClass="tooltip" for="imprimirVisualizacaoUsuario"  >
+									<h:outputText value="Imprimir Relatório" escape="false"/>
+								</p:tooltip>
+				
+							</p:commandLink>
+							</f:facet>
+							
+							<p:commandLink styleClass="ui-icon ui-icon-pencil" title="Editar"
+								oncomplete="PF('dlgEditarUsuario').show();"
+								actionListener="#{cadastrarUsuarioBean.enviaEditavel(usuario)}"
+								update="dlgEditarUsuario frmEditarUsuario" />
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:tab>
+
+			</p:tabView>
+
+		</h:body>
+
+		<p:dialog id="dlgEditarUsuario" widgetVar="dlgEditarUsuario"
+			modal="true" resizable="false" closable="false"
+			styleClass="dialog-center-header">
+
+			<f:facet name="header">
+
+				<h:outputText value="Editar Informações" />
+
+			</f:facet>
+
+			<h:form id="frmEditarUsuario">
+				<p:panelGrid columns="2">
+
+						<h:outputLabel value="Nome:" style="font-weight:bold" />
+						<h:outputLabel value="#{cadastrarUsuarioBean.usuarioEditavel.nome}" />
+
+						<h:outputLabel value="Posto/Grad.:" style="font-weight:bold" />
+						
+						<p:selectOneMenu 
+								value="#{cadastrarUsuarioBean.usuarioEditavel.postGrad}">
+								<f:selectItems
+									value="#{cadastrarUsuarioBean.listaPosto}"
+									var="posto" itemValue="#{posto.id}"
+									itemLabel="#{posto.posto}" />
+							</p:selectOneMenu>
+						
+						<h:outputLabel value="Email" style="font-weight:bold" />
+						<p:inputText value="#{cadastrarUsuarioBean.usuarioEditavel.email}" />
+						
+						<h:outputLabel value="Login:"	style="font-weight:bold" />
+						<p:inputText value="#{cadastrarUsuarioBean.usuarioEditavel.login}" />
+
+						<h:outputLabel value="Senha:"	style="font-weight:bold" />
+						<p:inputText value="#{cadastrarUsuarioBean.usuarioEditavel.senha}" />
+
+
+						<h:outputLabel value="Status:" style="font-weight:bold" />
+						<p:selectOneMenu value="#{cadastrarUsuarioBean.usuarioEditavel.status}">
+							<f:selectItems value="#{cadastrarUsuarioBean.getStatusEnum()}"
+								var="status" itemLabel="#{status.getLabel()}"
+								itemValue="#{status.getLabel()}" />
+						</p:selectOneMenu>
+
+				</p:panelGrid>
+
+				<div style="float: bottom;">
+
+					<p:commandButton id="btnEditarUsuario" value="Salvar"
+						actionListener="#{cadastrarUsuarioBean.editar}"
+						onstart="PF('statusDialog').show();"
+						update="tabViewUsuario:dtResultadoPesquisaUsuario"
+						oncomplete="PF('dlgEditarUsuario').hide();PF('statusDialog').hide();">
+						<p:confirm header="Confirmação" />
+					</p:commandButton>
+
+					<p:commandButton id="btnCancelarEditarUsuario" value="Cancelar"
+						actionListener="#{cadastrarUsuarioBean.limpaEditavel}"
+						oncomplete="PF('dlgEditarUsuario').hide();" />
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Definir Posto/Grad." widgetVar="postoDialog" modal="true" width="25%" height="50%">
+			<p:ajax event="close" update=":tabViewUsuario:frmCadastrarUsuario"/>
+			<h:form id="frmEditarPosto">
+		    	<p:outputPanel id="postoDetail" style="text-align:center;">
+		    	<p:panel>
+		    	  	<p:dataTable id="postos" var="postos" value="#{cadastrarUsuarioBean.listaPosto}" 
+                	editable="true">
+
+				       <p:ajax event="rowEdit" listener="#{cadastrarUsuarioBean.onRowEdit}" update=":frmEditarPosto:postos" />
+				 
+				       <p:column headerText="Posto/Grad.">
+				           <p:cellEditor>
+				               <f:facet name="output"><h:outputText value="#{postos.posto}" /></f:facet>
+				               <f:facet name="input"><p:inputText value="#{postos.posto}" style="width:100%" label="Nome"/></f:facet>
+				           </p:cellEditor>
+				       </p:column>
+				       
+				       <p:column style="width:32px">
+				           <p:rowEditor />
+				       </p:column>
+				       
+				     </p:dataTable>
+				    </p:panel>
+		    	</p:outputPanel>
+		    	
+		    </h:form>	
+		</p:dialog> 
+
+		<p:confirmDialog styleClass="noIcon" global="true">
+			<f:facet name="message">
+				<h:outputText value="Deseja salvar o registro?" style="margin:10px;" />
+				<br />
+			</f:facet>
+			<div style="text-align: center; vertical-align: bottom;">
+				<p:commandButton id="btnConfirmYes" value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" update=":messages" />
+				<p:commandButton id="btnConfirmNo" value="Não" type="button"
+					styleClass="ui-confirmdialog-no" />
+			</div>
+		</p:confirmDialog>
+</ui:define>
+</ui:composition>

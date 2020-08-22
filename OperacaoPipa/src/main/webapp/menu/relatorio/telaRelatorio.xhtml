@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html" template="/layout.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+		<h:body>
+
+			<h1 style="color: black;">Relatórios</h1>
+
+			<p:dialog modal="true" widgetVar="statusDialog" header="Carregando"
+				draggable="false" closable="false" resizable="false">
+				<p:graphicImage value="/images/loadingbar.gif" />
+			</p:dialog>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			
+			<p:growl id="messages" showDetail="true"/>
+
+			<h:form id="form">
+
+				<p:panel>
+					<p:panelGrid columns="2">
+					<p:commandLink id="relatorioIntUsu" update="relatorioDetail"
+						oncomplete="PF('relatorioDialog').show()"
+						action="#{relatorioBean.recuperarInteracaoUsuario}">
+						<h:outputText value="Relatório de Interações X Usuário" />
+					</p:commandLink>
+					
+					<p:spacer width="20" height="20" />
+					
+					<p:commandLink id="relatorioCidadePipeiro" update="relatorioPipeiroDetail"
+						oncomplete="PF('relatorioPipeiroDialog').show()" 
+						action="#{relatorioBean.zerarListaParametros}">
+						<h:outputText value="Relatório de Cidade X Pipeiros" />
+					</p:commandLink>
+					
+					</p:panelGrid>
+				</p:panel>
+
+			
+			
+			
+		<p:dialog header="Relatório de Interações X Usuário" widgetVar="relatorioDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="90%" height="90%" position="top">
+        
+        <p:outputPanel id="relatorioDetail" style="text-align:center;">
+        	<p:messages id="messagesDetail" showDetail="true" autoUpdate="true" closable="true" />
+        	<p:panel>
+        		<p:dataTable id="relatorio" var="relatorio" value="#{relatorioBean.listaParametros}"
+	    	style="margin-bottom:0;width: 100%" scrollable="true" scrollHeight="350" emptyMessage="">
+	    	
+	    	
+	    		<p:column headerText="Usuario" sortBy="#{relatorio.usuario}">
+			        <h:outputText value="#{relatorio.usuario}" />
+			    </p:column>
+			    
+			    <p:column headerText="Funcionalidade" sortBy="#{relatorio.funcionalidade}">
+			        <h:outputText value="#{relatorio.funcionalidade}" />
+			    </p:column>
+			    
+			    <p:column headerText="Ação" sortBy="#{relatorio.acao}">
+			        <h:outputText value="#{relatorio.acao}" />
+			    </p:column>
+			    
+			    <p:column headerText="OBS">
+			        <h:outputText value="#{relatorio.obs}"/>
+			    </p:column>
+			    
+			    <p:column headerText="Data" sortBy="#{relatorio.data}" >
+			        <h:outputText value="#{relatorio.data}">
+			       	 <f:convertDateTime locale="pt,BR" dateStyle="long" pattern="dd/MM/yyyy" />
+			        </h:outputText>
+			    </p:column>
+			    
+	    	</p:dataTable>
+        	</p:panel>
+        	
+            </p:outputPanel>
+    </p:dialog>  
+    
+    <p:dialog header="Relatório de Cidade x Pipeiro" widgetVar="relatorioPipeiroDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="90%" height="90%" position="top">
+        
+        <p:outputPanel id="relatorioPipeiroDetail" style="text-align:center;">
+        	<p:messages id="messagesDetailPipeiro" showDetail="true" autoUpdate="true" closable="true" />
+        	<p:panel>
+        	
+        	<h:outputLabel value="Cidade: "/>
+							<p:selectOneMenu id="oneCidadePontoColeta"
+								value="#{relatorioBean.codCidade}">
+								<p:ajax event="change" update="@this" process="@this"/>
+								<f:selectItems
+									value="#{relatorioBean.listacidades}"
+									var="cidade" itemValue="#{cidade.id}"
+									itemLabel="#{cidade.cidade}" />
+							</p:selectOneMenu>
+        	
+        	<p:spacer width="20" height="20" />
+        	
+        	<p:outputLabel value="Mês:  " />
+	                <h:selectOneMenu id="mes" value="#{relatorioBean.mesSelecionado}" label="Mês">
+	                <p:ajax event="change" update="@this" process="@this"/>
+			                <f:selectItem itemLabel="Mês" itemValue="" noSelectionOption="true" />
+			                <f:selectItem itemLabel="Janeiro" itemValue="0" />
+			                <f:selectItem itemLabel="Fevereiro" itemValue="1" />
+			                <f:selectItem itemLabel="Março" itemValue="2" />
+			                <f:selectItem itemLabel="Abril" itemValue="3" />
+			                <f:selectItem itemLabel="Maio" itemValue="4" />
+			                <f:selectItem itemLabel="Junho" itemValue="5" />
+			                <f:selectItem itemLabel="Julho" itemValue="6" />
+			                <f:selectItem itemLabel="Agosto" itemValue="7" />
+			                <f:selectItem itemLabel="Setembro" itemValue="8" />
+			                <f:selectItem itemLabel="Outubro" itemValue="9" />
+			                <f:selectItem itemLabel="Novembro" itemValue="10" />
+			                <f:selectItem itemLabel="Dezembro" itemValue="11" />
+			                
+					</h:selectOneMenu>
+					
+					<p:outputLabel value="Ano:  " />
+					<h:selectOneMenu id="ano" value="#{relatorioBean.anoSelecionado}" label="Ano">
+					<p:ajax event="change" update="@this" process="@this"/>
+		                <f:selectItem itemLabel="Ano" itemValue="" noSelectionOption="true" />
+		                <f:selectItem itemLabel="2015" itemValue="2015" />
+		                <f:selectItem itemLabel="2016" itemValue="2016" />
+		                <f:selectItem itemLabel="2017" itemValue="2017" />
+		                <f:selectItem itemLabel="2018" itemValue="2018" />
+		                <f:selectItem itemLabel="2019" itemValue="2019" />
+		                <f:selectItem itemLabel="2020" itemValue="2020" />
+		                <f:selectItem itemLabel="2021" itemValue="2021" />
+		                <f:selectItem itemLabel="2022" itemValue="2022" />
+		                <f:selectItem itemLabel="2023" itemValue="2023" />
+		                <f:selectItem itemLabel="2024" itemValue="2024" />
+		                <f:selectItem itemLabel="2025" itemValue="2025" />
+		                <f:selectItem itemLabel="2026" itemValue="2026" />
+                
+					</h:selectOneMenu>
+        	
+        	<p:spacer width="20" height="20" />
+        	
+        	<p:commandButton  value="Buscar" actionListener="#{relatorioBean.buscarCidadePipeiro()}" update="relatorioPipeiro" process="@this"/>
+        	
+        		<p:dataTable id="relatorioPipeiro" var="relatorioPipeiro" value="#{relatorioBean.listaParametros}"
+	    	style="margin-bottom:0;width: 100%" scrollable="true" scrollHeight="350" emptyMessage="">
+	    	
+	    	
+	    		<p:column headerText="Pipeiro" sortBy="#{relatorioPipeiro.nomePipeiro}">
+			        <h:outputText value="#{relatorioPipeiro.nomePipeiro}" />
+			    </p:column>
+			    
+			    <p:column headerText="Cap Pipa" >
+			        <h:outputText value="#{relatorioPipeiro.capacidadePipa}" />
+			    </p:column>
+			    
+			    <p:column headerText="NR Pessoas" >
+			        <h:outputText value="#{relatorioPipeiro.qtdPessoas}" />
+			    </p:column>
+			    
+			    <p:column headerText="NR PA">
+			        <h:outputText value="#{relatorioPipeiro.qtdPA}"/>
+			    </p:column>
+			    
+			    <p:column headerText="QTD Água">
+			        <h:outputText value="#{relatorioPipeiro.qtqAgua}"/>
+			    </p:column>
+			    
+			    <p:column headerText="Carrada Atual">
+			        <h:outputText value="#{relatorioPipeiro.qtdViagens}"/>
+			    </p:column>
+			    
+			     <p:column headerText="Carrada Ideal">
+			        <h:outputText value="#{relatorioPipeiro.qtdViagensIdeal}"/>
+			    </p:column>
+			    
+			    <p:column headerText="Diferença">
+			        <h:outputText value="#{relatorioPipeiro.qtdViagensDiferenca}"/>
+			    </p:column>
+			    
+			    <p:column headerText="KM Pecorrido">
+			        <h:outputText value="#{relatorioPipeiro.kmPecorrido}"/>
+			    </p:column>
+			    
+			    <p:column headerText="Valor" >
+			        <h:outputText value="#{relatorioPipeiro.valorBruto}">
+			       	 <f:convertNumber type="currency" currencySymbol="R$" />
+			        </h:outputText>
+			    </p:column>
+			    
+	    	</p:dataTable>
+        	</p:panel>
+        	
+            </p:outputPanel>
+    </p:dialog>  
+			
+			</h:form>
+		</h:body>	
+	</ui:define>
+</ui:composition>
